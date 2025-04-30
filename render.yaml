@@ -1,7 +1,7 @@
 services:
   - type: web
     name: saudi-iban-generator
-    env: php
+    env: docker
     plan: free
     buildCommand: "composer install --no-dev && php artisan migrate --force"
     startCommand: "php artisan serve --host 0.0.0.0 --port 10000"
