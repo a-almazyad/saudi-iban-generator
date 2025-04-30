@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Saudi IBAN Generator</title>
-    @vite(['resources/css/app.css'])
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4 transition">
