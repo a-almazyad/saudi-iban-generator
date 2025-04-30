@@ -1,0 +1,15 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IbanController;
+
+Route::get('/', [IbanController::class, 'index']);
+Route::post('/generate', [IbanController::class, 'generate'])->name('generate.iban');
+
