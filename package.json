@@ -1,11 +1,12 @@
 {
     "private": true,
-    "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "tailwind": "tailwindcss -i ./resources/css/app.css -o ./public/css/output.css --watch"
     },
     "devDependencies": {
+        "@tailwindcss/postcss": "^4.1.5",
         "@tailwindcss/vite": "^4.0.0",
         "autoprefixer": "^10.4.21",
         "axios": "^1.8.2",
