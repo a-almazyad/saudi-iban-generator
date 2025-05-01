@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Saudi IBAN Generator</title>
-    @vite(['resources/css/app.css'])
+    <link rel="stylesheet" href="{{ asset('css/output.css') }}">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4 transition">
@@ -124,3 +124,15 @@
 
 </body>
 </html>
+
+{{-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saudi IBAN Generator</title>
+    <link rel="stylesheet" href="{{ asset('css/output.css') }}">
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4">
+    <div class="debug-ui">Tailwind is working!</div>
+</body>
+</html> --}}
