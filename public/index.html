@@ -9,9 +9,26 @@
       })">
 <head>
   <script>
-    const savedPref = localStorage.getItem('darkMode');
+    let savedPref = localStorage.getItem('darkMode');
+    const expiryKey = 'darkModeSetAt';
+    const now = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+    const lastSet = parseInt(localStorage.getItem(expiryKey), 10);
+    if (!lastSet || now - lastSet > maxAge) {
+      localStorage.removeItem('darkMode');
+      localStorage.removeItem(expiryKey);
+      savedPref = null;
+    }
+
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const useDark = savedPref === null ? prefersDark : JSON.parse(savedPref);
+
+    if (savedPref !== 'true' && savedPref !== 'false') {
+      localStorage.removeItem('darkMode');
+      savedPref = null;
+    }
+
+    const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
 
     console.log('[DarkMode] Saved Pref:', savedPref, '| System Prefers Dark:', prefersDark);
 
@@ -163,9 +180,24 @@
         darkMode: false,
 
         init() {
-          const stored = localStorage.getItem('darkMode');
+          let stored = localStorage.getItem('darkMode');
+          const expiryKey = 'darkModeSetAt';
+          const now = Date.now();
+          const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+          const lastSet = parseInt(localStorage.getItem(expiryKey), 10);
+          if (!lastSet || now - lastSet > maxAge) {
+            localStorage.removeItem('darkMode');
+            localStorage.removeItem(expiryKey);
+            stored = null;
+          }
+
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const activeDark = stored !== null ? JSON.parse(stored) : prefersDark;
+          if (stored !== 'true' && stored !== 'false') {
+            localStorage.removeItem('darkMode');
+            stored = null;
+          }
+          const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
           document.documentElement.classList.toggle('dark', activeDark);
           this.darkMode = activeDark;
         },
@@ -173,6 +205,7 @@
         toggleTheme() {
           this.darkMode = !this.darkMode;
           localStorage.setItem('darkMode', this.darkMode);
+          localStorage.setItem('darkModeSetAt', Date.now().toString());
           document.documentElement.classList.toggle('dark', this.darkMode);
         },
 
