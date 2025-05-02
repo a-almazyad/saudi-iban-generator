@@ -26,7 +26,7 @@
         </div>
 
         <!-- IBAN Display -->
-        <div class="mb-4" x-show="generatedIban">
+        <div class="mb-4 text-left" x-show="generatedIban">
             <p class="text-sm sm:text-base mb-1">
                 <span class="font-semibold">Generated IBAN:</span>
                 <span id="iban-text" class="text-blue-700 font-mono break-words" x-text="generatedIban.iban"></span>
@@ -36,10 +36,9 @@
                 <span x-text="generatedIban.bank"></span>
             </p>
             <button @click="copyIban()" class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm">
-                📋 Copy IBAN
+                📋 Copy
             </button>
         </div>
-
         <!-- Bank Selector -->
         <div class="mb-4 text-left">
             <label for="bankSelector" class="text-sm font-semibold text-gray-700 block mb-1">Choose a bank (optional):</label>
@@ -59,7 +58,7 @@
             type="button"
             class="w-full text-sm sm:text-base bg-green-600 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
         >
-            🔁 Generate IBAN
+            🔁 Generate
         </button>
 
         <!-- IBAN History -->
