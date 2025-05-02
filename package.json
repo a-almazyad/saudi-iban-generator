@@ -1,7 +1,7 @@
 {
   "name": "saudi-iban-generator",
   "version": "1.0.0",
-  "description": "A simple and elegant Laravel application that generates valid Saudi IBANs with identified banks. Built with modern front-end technologies including Tailwind CSS and Alpine.js, this project provides a responsive UI and real-time client-side interactivity.",
+  "description": "Saudi IBAN Generator 🇸🇦 : Generate valid Saudi IBANs instantly with bank identification. clipboard copy, and recent history support.",
   "main": "index.js",
   "devDependencies": {
     "tailwindcss": "^4.1.5",

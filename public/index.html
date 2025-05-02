@@ -57,7 +57,7 @@
   </script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center min-h-screen px-4 transition-colors duration-300">
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-0 px-4 transition-colors duration-300">
 
   <!-- Toast -->
   <div 
@@ -68,120 +68,136 @@
     x-cloak
   ></div>
 
-  <div class="bg-white dark:bg-gray-800 dark:text-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transition-colors duration-300">
-    <div class="text-right mb-4 text-xs">
-      <button @click="toggleTheme()" class="hover:underline">
-        <span x-text="darkMode ? '🌞 Light' : '🌙 Dark'"></span>
-      </button>
-    </div>
-    <div class="mb-6">
-      <h1 class="text-xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white">
-        🇸🇦 Saudi IBAN Generator
-      </h1>
-    </div>
-
-    <!-- IBAN Display -->
-    <div class="mb-4 text-left" x-show="generatedIban !== null">
-      <p class="text-sm sm:text-base mb-1">
-        <span class="font-semibold">Generated IBAN:</span>
-        <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
-      </p>
-      <p class="text-sm text-gray-600">
-        <span class="font-semibold">Bank:</span>
-        <span class="ml-1" x-text="generatedIban ? generatedIban.bank : ''"></span>
-      </p>
-      <div class="relative inline-block mt-3">
-        <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
-          Copied!
-        </div>
-        <button 
-          @click="copyIban()" 
-          :disabled="!generatedIban"
-          class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-          📋 Copy
+  <div class="min-h-screen flex flex-col items-center justify-start pt-20">
+    <div class="flex flex-col items-center justify-center h-[520px]">
+      <div class="bg-white dark:bg-gray-800 dark:text-white p-6 sm:p-8 rounded-2xl w-[400px] h-[520px] text-center transition-colors duration-300 flex flex-col justify-between">
+      <div class="text-right mb-4 text-xs">
+        <button @click="toggleTheme()" class="hover:underline">
+          <span x-text="darkMode ? '🌞 Light' : '🌙 Dark'"></span>
         </button>
       </div>
-    </div>
-
-    <!-- Bank Selector -->
-    <div class="mb-4 text-left">
-      <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 block mb-1">Choose a bank (optional):</label>
-      <div class="relative" x-data="{ dropdownOpen: false }">
-        <div @click="dropdownOpen = !dropdownOpen"
-             class="cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <template x-if="selectedBankCode && bankOptions[selectedBankCode]">
-              <img :src="bankOptions[selectedBankCode].logo" alt="Logo" class="w-4 h-4" />
-            </template>
-            <template x-if="!selectedBankCode">
-              <span>🎲</span>
-            </template>
-            <span x-text="selectedBankCode ? bankOptions[selectedBankCode].name : 'Random Bank'"></span>
-          </div>
-          <svg class="w-4 h-4 ml-2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-        <div x-show="dropdownOpen" @click.outside="dropdownOpen = false"
-             class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto">
-          <div @click="selectedBankCode = ''; dropdownOpen = false"
-               class="flex items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-            <span>🎲 Random Bank</span>
-          </div>
-          <template x-for="(bank, code) in bankOptions" :key="code">
-            <div @click="selectedBankCode = code; dropdownOpen = false"
-                 class="flex items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-              <img :src="bank.logo" alt="" class="w-5 h-5 mr-2" />
-              <span x-text="bank.name"></span>
-            </div>
-          </template>
-        </div>
+      <div class="mb-6">
+        <h1 class="text-xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white">
+          🇸🇦 Saudi IBAN Generator
+        </h1>
       </div>
-    </div>
 
-    <!-- Generate Button -->
-    <button
-      @click="generateIban()"
-      type="button"
-      class="w-full text-sm sm:text-base bg-green-600 dark:bg-green-800 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
-    >
-      🔁 Generate
-    </button>
-
-    <!-- IBAN History -->
-    <template x-if="ibanHistory.length">
-      <div class="mt-6 text-left">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
-          <span>Recent IBANs:</span>
-          <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
-            🗑️ Clear History
+      <!-- IBAN Display -->
+      <div class="mb-4 text-left" x-show="generatedIban !== null">
+        <p class="text-sm sm:text-base mb-1">
+          <span class="font-semibold">Generated IBAN:</span>
+          <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
+        </p>
+        <p class="text-sm text-gray-600">
+          <span class="font-semibold">Bank:</span>
+          <span class="ml-1" x-text="generatedIban ? generatedIban.bank : ''"></span>
+        </p>
+        <div class="relative inline-block mt-3">
+          <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
+            Copied!
+          </div>
+          <button 
+            @click="copyIban()" 
+            :disabled="!generatedIban"
+            class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            📋 Copy
           </button>
-        </h2>
-        <ul class="text-xs sm:text-sm space-y-1">
-          <template x-for="item in ibanHistory" :key="item.iban">
-            <li class="font-mono text-gray-700 dark:text-gray-300 break-words leading-snug">
-              <div class="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
-                <span class="text-blue-700" x-text="item.iban"></span>
-                <span class="hidden sm:inline">–</span>
-                <div class="flex items-center gap-1 min-w-0">
-                  <template x-if="Object.entries(bankOptions).some(([_, b]) => b.name === item.bank)">
-                    <template x-if="!item.bank.includes('Random')">
-                      <img :src="Object.entries(bankOptions).find(([k,v]) => v.name === item.bank)[1].logo" alt="Logo" class="w-4 h-4 flex-shrink-0" />
-                    </template>
-                  </template>
-                  <span 
-                    x-text="item.bank" 
-                    class="truncate block max-w-[90px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] xl:max-w-[200px] font-normal align-middle"
-                    :title="item.bank"
-                    style="vertical-align: middle;"
-                  ></span>
-                </div>
-              </div>
-            </li>
-          </template>
-        </ul>
+        </div>
       </div>
-    </template>
+
+      <!-- Bank Selector -->
+      <div class="mb-4 text-left">
+        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 block mb-1">Choose a bank (optional):</label>
+        <div class="relative" x-data="{ dropdownOpen: false }">
+          <div @click="dropdownOpen = !dropdownOpen"
+               class="cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <template x-if="selectedBankCode && bankOptions[selectedBankCode]">
+                <img :src="bankOptions[selectedBankCode].logo" alt="Logo" class="w-4 h-4" />
+              </template>
+              <template x-if="!selectedBankCode">
+                <span>🎲</span>
+              </template>
+              <span x-text="selectedBankCode ? bankOptions[selectedBankCode].name : 'Random Bank'"></span>
+            </div>
+            <svg class="w-4 h-4 ml-2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div x-show="dropdownOpen" @click.outside="dropdownOpen = false"
+               class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg max-h-60 overflow-y-auto">
+            <div @click="selectedBankCode = ''; dropdownOpen = false"
+                 class="flex items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
+              <span>🎲 Random Bank</span>
+            </div>
+            <template x-for="(bank, code) in bankOptions" :key="code">
+              <div @click="selectedBankCode = code; dropdownOpen = false"
+                   class="flex items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
+                <img :src="bank.logo" alt="" class="w-5 h-5 mr-2" />
+                <span x-text="bank.name"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button
+        @click="generateIban()"
+        type="button"
+        class="w-full text-sm sm:text-base bg-green-600 dark:bg-green-800 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
+      >
+        🔁 Generate
+      </button>
+      </div>
+    </div>
+
+    <div class="w-full max-w-xl text-left mt-8">
+      <template x-if="ibanHistory.length">
+        <div>
+          <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
+            <span>Recent IBANs:</span>
+            <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
+              🗑️ Clear History
+            </button>
+          </h2>
+          <ul class="text-xs sm:text-sm space-y-1">
+            <template x-for="(item, index) in ibanHistory" :key="item.iban">
+              <li 
+                class="font-mono break-words leading-snug transition-colors duration-300"
+                :class="{
+                  'text-gray-900 dark:text-white': index === 0,
+                  'text-gray-700 dark:text-gray-200': index === 1,
+                  'text-gray-600 dark:text-gray-300': index === 2,
+                  'text-gray-500 dark:text-gray-400': index === 3,
+                  'text-gray-400 dark:text-gray-500': index === 4,
+                  'text-gray-300 dark:text-gray-600': index === 5,
+                  'text-gray-200 dark:text-gray-700': index === 6,
+                }"
+              >
+                <div class="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
+                  <span class="text-blue-700" x-text="item.iban"></span>
+                  <span class="hidden sm:inline">–</span>
+                  <div class="flex items-center gap-1 min-w-0">
+                    <template x-if="Object.entries(bankOptions).some(([_, b]) => b.name === item.bank)">
+                      <template x-if="!item.bank.includes('Random')">
+                        <img :src="Object.entries(bankOptions).find(([k,v]) => v.name === item.bank)[1].logo" alt="Logo" class="w-4 h-4 flex-shrink-0" />
+                      </template>
+                    </template>
+                    <span 
+                      x-text="item.bank" 
+                      class="truncate block max-w-[90px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] xl:max-w-[200px] font-normal align-middle"
+                      :title="item.bank"
+                      style="vertical-align: middle;"
+                    ></span>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </template>
+    </div>
   </div>
 
   <!-- Footer -->
@@ -201,15 +217,15 @@
         selectedBankCode: '',
         bankOptions: {
           '5': { name: 'Alinma Bank', logo: 'logos/alinma.png' },
-          '10': { name: 'Saudi National Bank', logo: 'logos/snb.png' },
+          '10': { name: 'SNB', logo: 'logos/snb.png' },
           '15': { name: 'Bank Albilad', logo: 'logos/bilad.png' },
           '20': { name: 'Riyad Bank', logo: 'logos/riyad.png' },
           '30': { name: 'Arab National Bank', logo: 'logos/anb.png' },
           '36': { name: 'D360 Bank', logo: 'logos/d360.png' },
           '45': { name: 'SABB', logo: 'logos/sabb.png' },
-          '55': { name: 'Banque Saudi Fransi', logo: 'logos/fransi.png' },
+          '55': { name: 'BSF', logo: 'logos/fransi.png' },
           '60': { name: 'Bank AlJazira', logo: 'logos/jazira.png' },
-          '65': { name: 'Saudi Investment Bank', logo: 'logos/saib.png' },
+          '65': { name: 'Investment Bank', logo: 'logos/saib.png' },
           '78': { name: 'STC Bank', logo: 'logos/stc.png' },
           '80': { name: 'Al Rajhi Bank', logo: 'logos/rajhi.png' },
           '90': { name: 'GIB', logo: 'logos/gib.png' }
@@ -279,7 +295,7 @@
 
           this.generatedIban = { iban, bank: actualBankName };
           this.ibanHistory.unshift({ iban, bank: actualBankName });
-          this.ibanHistory = this.ibanHistory.slice(0, 5);
+          this.ibanHistory = this.ibanHistory.slice(0, 7);
           localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
 
           this.selectedBankCode = bankCode === 'random' ? '' : actualBankCode;
