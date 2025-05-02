@@ -216,13 +216,13 @@
 
       <!-- Generate Button -->
       <button
-        @click="generateIban()"
-        type="button"
-        class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full hover:opacity-90 transition transform hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center justify-center gap-2"
-      >
-         <i data-feather="refresh-cw" class="w-5 h-5"></i> <!-- Feather Icon -->
-        <span x-text="lang === 'en' ? 'Generate IBAN' : 'توليد آيبان'"></span>
-      </button>
+      @click="generateIban()"
+      type="button"
+      class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full hover:opacity-90 transition transform hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center justify-center gap-2"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      <span x-text="lang === 'en' ? 'Generate IBAN' : 'توليد آيبان'"></span>
+    </button>
     </div>
 
     <!-- History Section -->
