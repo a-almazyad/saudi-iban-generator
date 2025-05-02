@@ -40,33 +40,48 @@
             </button>
         </div>
 
-        <!-- Generate Button -->
-        <div class="mt-4">
-            <button @click="generateIban()" type="button" class="w-full text-sm sm:text-base bg-green-600 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold">
-                🔁 Generate IBAN
-            </button>
+        <!-- Bank Selector -->
+        <div class="mb-4 text-left">
+            <label for="bankSelector" class="text-sm font-semibold text-gray-700 block mb-1">Choose a bank (optional):</label>
+            <select id="bankSelector"
+                    x-model="selectedBankCode"
+                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200">
+                <option value="">🎲 Random Bank</option>
+                <template x-for="(name, code) in bankOptions" :key="code">
+                    <option :value="code" x-text="name"></option>
+                </template>
+            </select>
         </div>
+
+        <!-- Generate Button -->
+        <button
+            @click="generateIban()"
+            type="button"
+            class="w-full text-sm sm:text-base bg-green-600 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
+        >
+            🔁 Generate IBAN
+        </button>
 
         <!-- IBAN History -->
         <template x-if="ibanHistory.length">
             <div class="mt-6 text-left">
                 <h2 class="text-sm font-semibold text-gray-700 mb-2 flex justify-between items-center">
                     <span>Recent IBANs:</span>
-                    <button @click="clearHistory()" class="text-xs text-red-600">
+                    <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
                         🗑️ Clear History
                     </button>
                 </h2>
-<ul class="text-xs sm:text-sm space-y-1">
-  <template x-for="item in ibanHistory" :key="item.iban">
-    <li class="font-mono text-gray-700 text-wrap break-words leading-snug">
-      <div class="flex flex-col sm:flex-row sm:gap-x-2">
-        <span x-text="item.iban"></span>
-        <span class="hidden sm:inline"> – </span>
-        <span x-text="item.bank" class="truncate inline-block max-w-full sm:max-w-[180px] md:max-w-[220px] lg:max-w-[260px] align-bottom" x-bind:title="item.bank"></span>
-      </div>
-    </li>
-  </template>
-</ul>
+                <ul class="text-xs sm:text-sm space-y-1">
+                    <template x-for="item in ibanHistory" :key="item.iban">
+                        <li class="font-mono text-gray-700 break-words leading-snug">
+                            <div class="flex flex-col sm:flex-row sm:gap-x-2">
+                                <span x-text="item.iban"></span>
+                                <span class="hidden sm:inline"> – </span>
+                                <span x-text="item.bank" class="truncate inline-block max-w-full sm:max-w-[180px] md:max-w-[220px] lg:max-w-[260px]" :title="item.bank"></span>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
             </div>
         </template>
     </div>
@@ -85,6 +100,22 @@
             return {
                 generatedIban: null,
                 ibanHistory: [],
+                selectedBankCode: '',
+                bankOptions: {
+                    '5': 'Alinma Bank',
+                    '10': 'SNB (Saudi National Bank)',
+                    '15': 'Bank Albilad',
+                    '20': 'Riyad Bank',
+                    '30': 'Arab National Bank',
+                    '36': 'D360 Bank',
+                    '45': 'SABB',
+                    '55': 'Banque Saudi Fransi',
+                    '60': 'Bank AlJazira',
+                    '65': 'Saudi Investment Bank',
+                    '78': 'STC Bank',
+                    '80': 'Al Rajhi Bank',
+                    '90': 'GIB'
+                },
                 showToast: false,
                 toastMessage: '',
 
@@ -94,13 +125,20 @@
                 },
 
                 generateIban() {
-                    fetch('/api/generate')
+                    let url = '/api/generate';
+                    if (this.selectedBankCode) {
+                        url += `?bank=${this.selectedBankCode}`;
+                    }
+
+                    fetch(url)
                         .then(res => res.json())
                         .then(data => {
                             this.generatedIban = data;
                             this.ibanHistory.unshift({ iban: data.iban, bank: data.bank });
                             this.ibanHistory = this.ibanHistory.slice(0, 5);
                             localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
+                        }).catch(() => {
+                            this.showToastMessage('Failed to fetch IBAN. Try again.');
                         });
                 },
 
