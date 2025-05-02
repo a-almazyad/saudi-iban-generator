@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" x-data="ibanApp()" x-init="loadHistory()">
+<head>
+  <meta charset="UTF-8" />
+  <title>Saudi IBAN Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4 transition">
+
+  <!-- Toast -->
+  <div 
+    x-show="showToast" 
+    x-transition 
+    class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-white text-black px-4 py-2 rounded shadow-lg ring-1 ring-gray-300 z-50 text-sm"
+    x-text="toastMessage"
+    x-cloak
+  ></div>
+
+  <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transition">
+    <div class="mb-6">
+      <h1 class="text-xl font-bold flex items-center justify-center gap-2">
+        🇸🇦 Saudi IBAN Generator
+      </h1>
+    </div>
+
+    <!-- IBAN Display -->
+    <div class="mb-4 text-left" x-show="generatedIban !== null">
+      <p class="text-sm sm:text-base mb-1">
+        <span class="font-semibold">Generated IBAN:</span>
+        <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
+      </p>
+      <p class="text-sm text-gray-600">
+        <span class="font-semibold">Bank:</span>
+        <span x-text="generatedIban ? generatedIban.bank : ''"></span>
+      </p>
+      <button 
+        @click="copyIban()" 
+        :disabled="!generatedIban"
+        class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+        📋 Copy
+      </button>
+    </div>
+
+    <!-- Bank Selector -->
+    <div class="mb-4 text-left">
+      <label for="bankSelector" class="text-sm font-semibold text-gray-700 block mb-1">Choose a bank (optional):</label>
+      <select id="bankSelector"
+              x-model="selectedBankCode"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200">
+        <option value="">🎲 Random Bank</option>
+        <template x-for="(name, code) in bankOptions" :key="code">
+          <option :value="code" x-text="name"></option>
+        </template>
+      </select>
+    </div>
+
+    <!-- Generate Button -->
+    <button
+      @click="generateIban()"
+      type="button"
+      class="w-full text-sm sm:text-base bg-green-600 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
+    >
+      🔁 Generate
+    </button>
+
+    <!-- IBAN History -->
+    <template x-if="ibanHistory.length">
+      <div class="mt-6 text-left">
+        <h2 class="text-sm font-semibold text-gray-700 mb-2 flex justify-between items-center">
+          <span>Recent IBANs:</span>
+          <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
+            🗑️ Clear History
+          </button>
+        </h2>
+        <ul class="text-xs sm:text-sm space-y-1">
+          <template x-for="item in ibanHistory" :key="item.iban">
+            <li class="font-mono text-gray-700 break-words leading-snug">
+              <div class="flex flex-col sm:flex-row sm:gap-x-2">
+                <span x-text="item.iban"></span>
+                <span class="hidden sm:inline"> – </span>
+                <span x-text="item.bank" class="truncate inline-block max-w-full sm:max-w-[180px] md:max-w-[220px] lg:max-w-[260px]" :title="item.bank"></span>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </template>
+  </div>
+
+  <!-- Footer -->
+  <footer class="fixed bottom-4 left-4 text-xs text-gray-500">
+    Developed by 
+    <a href="https://github.com/a-almazyad" target="_blank" class="underline hover:text-black font-medium">
+      @a-almazyad
+    </a>
+  </footer>
+
+  <!-- AlpineJS Logic -->
+  <script>
+    function ibanApp() {
+      return {
+        generatedIban: null,
+        ibanHistory: [],
+        selectedBankCode: '',
+        bankOptions: {
+          '5': 'Alinma Bank',
+          '10': 'SNB (Saudi National Bank)',
+          '15': 'Bank Albilad',
+          '20': 'Riyad Bank',
+          '30': 'Arab National Bank',
+          '36': 'D360 Bank',
+          '45': 'SABB',
+          '55': 'Banque Saudi Fransi',
+          '60': 'Bank AlJazira',
+          '65': 'Saudi Investment Bank',
+          '78': 'STC Bank',
+          '80': 'Al Rajhi Bank',
+          '90': 'GIB'
+        },
+        showToast: false,
+        toastMessage: '',
+
+        loadHistory() {
+          const stored = JSON.parse(localStorage.getItem('ibanHistory') || '[]');
+          this.ibanHistory = stored;
+        },
+
+        generateIban() {
+          const bankCode = this.selectedBankCode || Object.keys(this.bankOptions)[Math.floor(Math.random() * Object.keys(this.bankOptions).length)];
+          const paddedBankCode = bankCode.toString().padStart(2, '0');
+
+          let accountNumber = '';
+          for (let i = 0; i < 18; i++) {
+            accountNumber += Math.floor(Math.random() * 10);
+          }
+
+          const bban = paddedBankCode + accountNumber;
+          const checkDigits = this.calculateCheckDigits('SA', bban);
+          const iban = 'SA' + checkDigits + bban;
+
+          const bankName = this.bankOptions[bankCode];
+
+          this.generatedIban = { iban, bank: bankName };
+          this.ibanHistory.unshift({ iban, bank: bankName });
+          this.ibanHistory = this.ibanHistory.slice(0, 5);
+          localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
+        },
+
+        calculateCheckDigits(countryCode, bban) {
+          const rearranged = bban + countryCode + '00';
+          let converted = '';
+          for (const ch of rearranged) {
+            converted += isNaN(ch) ? (ch.toUpperCase().charCodeAt(0) - 55) : ch;
+          }
+          const mod97 = BigInt(converted) % 97n;
+          return String(98n - mod97).padStart(2, '0');
+        },
+
+        copyIban() {
+          const ibanText = this.$refs.ibanText?.textContent || '';
+          if (!ibanText) {
+            this.showToastMessage('Nothing to copy.');
+            return;
+          }
+
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(ibanText)
+              .then(() => this.showToastMessage('IBAN copied to clipboard!'))
+              .catch(() => this.showToastMessage('Failed to copy IBAN.'));
+          } else {
+            // Fallback using older execCommand method
+            const textarea = document.createElement('textarea');
+            textarea.value = ibanText;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+              document.execCommand('copy');
+              this.showToastMessage('IBAN copied to clipboard!');
+            } catch (err) {
+              this.showToastMessage('Copy not supported.');
+            }
+            document.body.removeChild(textarea);
+          }
+        },
+
+        clearHistory() {
+          this.ibanHistory = [];
+          localStorage.removeItem('ibanHistory');
+          this.showToastMessage('History cleared');
+        },
+
+        showToastMessage(msg) {
+          this.toastMessage = msg;
+          this.showToast = true;
+          setTimeout(() => this.showToast = false, 2000);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
