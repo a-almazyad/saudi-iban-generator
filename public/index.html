@@ -58,6 +58,31 @@
     };
   </script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: linear-gradient(-45deg, #e0f7fa, #f0f4c3, #ffe0b2, #f8bbd0);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      transition: opacity 0.5s;
+    }
+
+    .dark body::before {
+      background: linear-gradient(-45deg, #1e293b, #334155, #475569, #0f172a);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-0 px-4 transition-colors duration-300">
 
