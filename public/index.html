@@ -451,9 +451,19 @@
         },
 
         clearHistory() {
-          this.ibanHistory = [];
-          localStorage.removeItem('ibanHistory');
-          this.showToastMessage(this.lang === 'en' ? 'History cleared 🗑️' : 'تم مسح السجل 🗑️');
+          const fadeDuration = 300;
+          const list = document.querySelectorAll('ul li');
+          list.forEach((el, i) => {
+            setTimeout(() => {
+              el.style.transition = `opacity ${fadeDuration}ms ease`;
+              el.style.opacity = '0';
+            }, i * 50);
+          });
+          setTimeout(() => {
+            this.ibanHistory = [];
+            localStorage.removeItem('ibanHistory');
+            this.showToastMessage(this.lang === 'en' ? 'History cleared 🗑️' : 'تم مسح السجل 🗑️');
+          }, list.length * 50 + fadeDuration);
         },
 
         showToastMessage(msg) {
