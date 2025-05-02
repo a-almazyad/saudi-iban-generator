@@ -52,7 +52,7 @@
             <div class="mt-6 text-left">
                 <h2 class="text-sm font-semibold text-gray-700 mb-2 flex justify-between items-center">
                     <span>Recent IBANs:</span>
-                    <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
+                    <button @click="clearHistory()" class="text-xs text-red-600">
                         🗑️ Clear History
                     </button>
                 </h2>
