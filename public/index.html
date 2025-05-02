@@ -82,6 +82,27 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    .iban-highlight {
+      animation: pulseHighlight 0.6s ease-out;
+    }
+
+    @keyframes pulseHighlight {
+      0% {
+        background-color: var(--highlight-color);
+      }
+      100% {
+        background-color: transparent;
+      }
+    }
+
+    :root {
+      --highlight-color: rgba(255, 249, 196, 0.4); /* lighter yellow for light mode */
+    }
+
+    .dark {
+      --highlight-color: rgba(107, 114, 128, 0.2); /* gray-500 for dark mode */
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-0 px-4 transition-colors duration-300">
@@ -370,6 +391,13 @@
   : this.bankOptions[actualBankCode].ar;
 
           this.generatedIban = { iban, bank: actualBankName };
+
+          // Highlight animation for IBAN display
+          const ibanEl = this.$refs.ibanText;
+          if (ibanEl) {
+            ibanEl.classList.add('iban-highlight');
+            setTimeout(() => ibanEl.classList.remove('iban-highlight'), 600);
+          }
 
           this.animatedBankName = ''.padEnd(actualBankName.length, ' ');
           const nameTarget = actualBankName.split('');
