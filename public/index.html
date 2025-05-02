@@ -87,30 +87,33 @@
       </div>
 
       <!-- IBAN Display -->
-      <div class="mb-4 text-left h-[120px] flex flex-col justify-center" x-show="true">
-        <template x-if="generatedIban !== null">
-          <div>
-            <p class="text-sm sm:text-base mb-1">
-              <span class="font-semibold">Generated IBAN:</span>
-              <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
-            </p>
-            <p class="text-sm text-gray-600">
-              <span class="font-semibold">Bank:</span>
-              <span class="ml-1" x-text="generatedIban ? generatedIban.bank : ''"></span>
-            </p>
-            <div class="relative inline-block mt-3">
-              <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
-                Copied!
-              </div>
-              <button 
-                @click="copyIban()" 
-                :disabled="!generatedIban"
-                class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                📋 Copy
-              </button>
+      <div class="mb-4 text-left h-[120px] flex flex-col justify-center">
+        <div>
+          <p class="text-sm sm:text-base mb-1 font-semibold">Generated IBAN:</p>
+          <p>
+            <span 
+              id="iban-text" 
+              x-ref="ibanText" 
+              class="text-blue-700 font-mono break-words min-h-[1.5rem] inline-block"
+              x-text="animatedIban.length ? animatedIban.map((c, i) => (i > 1 && (i - 2) % 4 === 0 ? ' ' + c : c)).join('') : 'SA XXXX XXXX XXXX XXXX XXXX XX'">
+            </span>
+          </p>
+          <p class="text-sm text-gray-600">
+            <span class="font-semibold">Bank:</span>
+            <span class="ml-1" x-text="animatedBankName"></span>
+          </p>
+          <div class="relative inline-block mt-3">
+            <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
+              Copied!
             </div>
+            <button 
+              @click="copyIban()" 
+              :disabled="!generatedIban"
+              class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              📋 Copy
+            </button>
           </div>
-        </template>
+        </div>
       </div>
 
       <!-- Bank Selector -->
@@ -165,7 +168,7 @@
         <div>
           <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
             <span>Recent IBANs:</span>
-            <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
+            <button @click="clearHistory()" class="text-xs text-red-600">
               🗑️ Clear History
             </button>
           </h2>
@@ -223,6 +226,8 @@
         generatedIban: null,
         ibanHistory: [],
         selectedBankCode: '',
+        animatedIban: [],
+        animatedBankName: '',
         bankOptions: {
           '5': { name: 'Alinma Bank', logo: 'logos/alinma.png' },
           '10': { name: 'SNB', logo: 'logos/snb.png' },
@@ -302,6 +307,65 @@
           const actualBankName = this.bankOptions[actualBankCode].name;
 
           this.generatedIban = { iban, bank: actualBankName };
+
+          this.animatedBankName = ''.padEnd(actualBankName.length, ' ');
+const nameTarget = actualBankName.split('');
+let j = 0;
+
+const nameInterval = setInterval(() => {
+  if (j >= nameTarget.length) return clearInterval(nameInterval);
+
+  let count = 0;
+  const maxCycles = 4;
+  const charIndex = j;
+
+  const charInterval = setInterval(() => {
+    if (count < maxCycles) {
+      const randChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      this.animatedBankName =
+        this.animatedBankName.substring(0, charIndex) +
+        randChar +
+        this.animatedBankName.substring(charIndex + 1);
+      count++;
+    } else {
+      clearInterval(charInterval);
+      this.animatedBankName =
+        this.animatedBankName.substring(0, charIndex) +
+        nameTarget[charIndex] +
+        this.animatedBankName.substring(charIndex + 1);
+    }
+  }, 30);
+
+  j++;
+}, 50);
+
+          // Animation logic: "SA" fixed, animate from 3rd char onward
+          if (!this.animatedIban.length) {
+            this.animatedIban = ['S', 'A', ...Array.from({ length: iban.length - 2 }, () => 'X')];
+          }
+          const target = iban.split('');
+          let i = 2;
+
+          const interval = setInterval(() => {
+            if (i >= target.length) return clearInterval(interval);
+
+            const slot = i;
+            let count = 0;
+            const maxCycles = 4;
+
+            const slotInterval = setInterval(() => {
+              if (count < maxCycles) {
+                this.animatedIban[slot] = Math.floor(Math.random() * 10).toString();
+                count++;
+              } else {
+                clearInterval(slotInterval);
+                this.animatedIban[slot] = target[slot];
+              }
+            }, 40);
+
+            i++;
+          }, 50);
+
           this.ibanHistory.unshift({ iban, bank: actualBankName });
           this.ibanHistory = this.ibanHistory.slice(0, 7);
           localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
@@ -320,7 +384,7 @@
         },
 
         copyIban() {
-          const ibanText = this.$refs.ibanText?.textContent || '';
+          const ibanText = (this.$refs.ibanText?.textContent || '').replace(/\s+/g, '');
           if (!ibanText) {
             this.showToastMessage('Nothing to copy.');
             return;
@@ -365,7 +429,8 @@
           this.toastMessage = msg;
           this.showToast = true;
           setTimeout(() => this.showToast = false, 2000);
-        }
+        }     
+        
       }
     }
   </script>
