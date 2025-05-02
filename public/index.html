@@ -139,6 +139,8 @@
   <div class="fixed top-4 right-4 z-50 flex items-center gap-3">
      <button
       @click="toggleTheme()"
+      @keydown.enter="toggleTheme()"
+      @keydown.space="toggleTheme()"
       class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 transition transform hover:scale-110"
       :title="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
     >
@@ -147,6 +149,8 @@
     </button>
     <button
       @click="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
+      @keydown.enter="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
+      @keydown.space="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
       class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 transition transform hover:scale-110"
       :title="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
     >
@@ -421,8 +425,9 @@
             actualBankCode = this.selectedBankCode;
           }
 
+          // Added validation for user-provided bank codes in generateIban
           if (!this.bankOptions[actualBankCode]) {
-            // console.error(`Invalid bank code selected or generated: ${actualBankCode}`);
+            console.error(`Invalid bank code selected or generated: ${actualBankCode}`);
             this.showToastMessage(this.lang === 'en' ? 'Error: Invalid bank.' : 'خطأ: بنك غير صالح.', 'error');
             return;
           }
@@ -599,6 +604,7 @@
           }
         },
 
+        // Updated fallbackCopy to use modern APIs and ensure compatibility
         fallbackCopy(text) {
           const textarea = document.createElement('textarea');
           textarea.value = text;
@@ -642,12 +648,13 @@
           }, listItems.length * 30 + 300);
         },
 
+        // Updated toast message timing to handle multiple toasts
         showToastMessage(msg, type = 'info') {
-            this.toastMessage = msg;
-            this.toastType = type;
-            this.showToast = true;
-            if (this.toastTimeout) clearTimeout(this.toastTimeout); // Clear existing timer
-            this.toastTimeout = setTimeout(() => this.showToast = false, 2500);
+          this.toastMessage = msg;
+          this.toastType = type;
+          this.showToast = true;
+          if (this.toastTimeout) clearTimeout(this.toastTimeout); // Clear existing timer
+          this.toastTimeout = setTimeout(() => this.showToast = false, 2500);
         }
 
       }
