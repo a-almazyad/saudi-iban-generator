@@ -31,12 +31,7 @@
     const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
     if (useDark) {
       document.documentElement.classList.add('dark');
-    // System preference listener (only if no user preference is set)
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      if (localStorage.getItem('darkMode') === null) {
-        document.documentElement.classList.toggle('dark', e.matches);
-      }
-    });
+    }
   </script>
   <meta charset="UTF-8" />
   <title>Saudi IBAN Generator</title>
@@ -366,27 +361,6 @@
         toastTimeout: null, // To manage the toast timer
 
         init() {
-          // --- Dark Mode Initialization ---
-          let stored = localStorage.getItem('darkMode');
-          const expiryKey = 'darkModeSetAt';
-          const now = Date.now();
-          const maxAge = 24 * 60 * 60 * 1000;
-          const lastSet = parseInt(localStorage.getItem(expiryKey), 10);
-
-          if (!lastSet || now - lastSet > maxAge) {
-            localStorage.removeItem('darkMode');
-            localStorage.removeItem(expiryKey);
-            stored = null;
-          }
-          if (stored !== 'true' && stored !== 'false') {
-            localStorage.removeItem('darkMode');
-            stored = null;
-          }
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
-          // Set Alpine's reactive property. The watcher will sync the class/localStorage.
-          this.darkMode = activeDark;
-
           // --- Language Initialization ---
           this.lang = localStorage.getItem('lang') || 'en';
 
@@ -396,6 +370,21 @@
           // --- Icons Initialization ---
           this.$nextTick(() => {
             feather.replace(); // Initialize icons after Alpine is ready
+          });
+
+          // System preference listener (only if no user preference is set)
+          if (localStorage.getItem('darkMode') === null) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+              document.documentElement.classList.toggle('dark', e.matches);
+            });
+          }
+
+          // Cleanup intervals when the component is destroyed
+          this.$watch('$el', (el, oldEl) => {
+            if (!el) {
+              if (window.animatedBankNameInterval) clearInterval(window.animatedBankNameInterval);
+              if (window.animatedIbanInterval) clearInterval(window.animatedIbanInterval);
+            }
           });
         },
 
