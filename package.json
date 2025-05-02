@@ -1,19 +1,24 @@
 {
-    "private": true,
-"scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "dev:css": "tailwindcss -i ./resources/css/app.css -o ./public/css/output.css --watch"
-},
-    "devDependencies": {
-        "@tailwindcss/postcss": "^4.1.5",
-        "@tailwindcss/vite": "^4.0.0",
-        "autoprefixer": "^10.4.21",
-        "axios": "^1.8.2",
-        "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^1.2.0",
-        "postcss": "^8.5.3",
-        "tailwindcss": "^3.4.1",
-        "vite": "^6.2.4"
-    }
+  "name": "saudi-iban-generator",
+  "version": "1.0.0",
+  "description": "A simple and elegant Laravel application that generates valid Saudi IBANs with identified banks. Built with modern front-end technologies including Tailwind CSS and Alpine.js, this project provides a responsive UI and real-time client-side interactivity.",
+  "main": "index.js",
+  "devDependencies": {
+    "tailwindcss": "^4.1.5",
+    "tailwindcss-cli": "^0.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a-almazyad/saudi-iban-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/a-almazyad/saudi-iban-generator/issues"
+  },
+  "homepage": "https://github.com/a-almazyad/saudi-iban-generator#readme"
 }
