@@ -164,30 +164,36 @@
     </div>
 
     <div class="w-full max-w-xl text-left mt-8">
+      <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
+        <span>Recent IBANs:</span>
+        <button 
+          @click="ibanHistory.length && clearHistory()" 
+          :class="ibanHistory.length ? 'text-red-600 cursor-pointer' : 'text-gray-400 cursor-not-allowed'"
+          class="text-xs transition"
+          :disabled="!ibanHistory.length"
+        >
+          🗑️ Clear History
+        </button>
+      </h2>
       <template x-if="ibanHistory.length">
         <div>
-          <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
-            <span>Recent IBANs:</span>
-            <button @click="clearHistory()" class="text-xs text-red-600">
-              🗑️ Clear History
-            </button>
-          </h2>
           <ul class="text-xs sm:text-sm space-y-1">
             <template x-for="(item, index) in ibanHistory" :key="item.iban">
-              <li 
-                class="font-mono break-words leading-snug transition-colors duration-300"
-                :class="{
-                  'text-gray-900 dark:text-white': index === 0,
-                  'text-gray-700 dark:text-gray-200': index === 1,
-                  'text-gray-600 dark:text-gray-300': index === 2,
-                  'text-gray-500 dark:text-gray-400': index === 3,
-                  'text-gray-400 dark:text-gray-500': index === 4,
-                  'text-gray-300 dark:text-gray-600': index === 5,
-                  'text-gray-200 dark:text-gray-700': index === 6,
-                }"
-              >
+              <li>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:gap-x-2">
-                  <span class="text-blue-700" x-text="item.iban"></span>
+                  <span
+                    class="font-mono break-words leading-snug transition-colors duration-300"
+                    :class="{
+                      'text-gray-900 dark:text-white': index === 0,
+                      'text-gray-700 dark:text-gray-200': index === 1,
+                      'text-gray-600 dark:text-gray-300': index === 2,
+                      'text-gray-500 dark:text-gray-400': index === 3,
+                      'text-gray-400 dark:text-gray-500': index === 4,
+                      'text-gray-300 dark:text-gray-600': index === 5,
+                      'text-gray-200 dark:text-gray-700': index === 6,
+                    }"
+                    x-text="item.iban"
+                  ></span>
                   <span class="hidden sm:inline">–</span>
                   <div class="flex items-center gap-1 min-w-0">
                     <template x-if="Object.entries(bankOptions).some(([_, b]) => b.name === item.bank)">
@@ -197,7 +203,16 @@
                     </template>
                     <span 
                       x-text="item.bank" 
-                      class="truncate block max-w-[90px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] xl:max-w-[200px] font-normal align-middle"
+                      :class="{
+                        'text-gray-900 dark:text-white': index === 0,
+                        'text-gray-700 dark:text-gray-200': index === 1,
+                        'text-gray-600 dark:text-gray-300': index === 2,
+                        'text-gray-500 dark:text-gray-400': index === 3,
+                        'text-gray-400 dark:text-gray-500': index === 4,
+                        'text-gray-300 dark:text-gray-600': index === 5,
+                        'text-gray-200 dark:text-gray-700': index === 6,
+                      }"
+                      class="truncate block max-w-[90px] sm:max-w-[140px] md:max-w-[160px] lg:max-w-[180px] xl:max-w-[200px] font-normal align-middle transition-colors duration-300"
                       :title="item.bank"
                       style="vertical-align: middle;"
                     ></span>
