@@ -56,13 +56,17 @@
                         🗑️ Clear History
                     </button>
                 </h2>
-                <ul class="text-xs sm:text-sm space-y-1">
-                    <template x-for="item in ibanHistory" :key="item.iban">
-                        <li class="font-mono text-gray-700">
-                            <span x-text="item.iban"></span> – <span x-text="item.bank"></span>
-                        </li>
-                    </template>
-                </ul>
+<ul class="text-xs sm:text-sm space-y-1">
+  <template x-for="item in ibanHistory" :key="item.iban">
+    <li class="font-mono text-gray-700 text-wrap break-words leading-snug">
+      <div class="flex flex-col sm:flex-row sm:gap-x-2">
+        <span x-text="item.iban"></span>
+        <span class="hidden sm:inline"> – </span>
+        <span x-text="item.bank" class="truncate inline-block max-w-full sm:max-w-[180px] md:max-w-[220px] lg:max-w-[260px] align-bottom" x-bind:title="item.bank"></span>
+      </div>
+    </li>
+  </template>
+</ul>
             </div>
         </template>
     </div>
@@ -124,15 +128,3 @@
 
 </body>
 </html>
-
-{{-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Saudi IBAN Generator</title>
-    <link rel="stylesheet" href="{{ asset('css/output.css') }}">
-</head>
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4">
-    <div class="debug-ui">Tailwind is working!</div>
-</body>
-</html> --}}

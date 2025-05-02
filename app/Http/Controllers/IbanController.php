@@ -19,18 +19,19 @@ class IbanController extends Controller
     private function generateIban()
     {
         $bankMap = [
-            80 => 'Al Rajhi Bank',
-            30 => 'SNB (Saudi National Bank)',
-            60 => 'Riyad Bank',
-            50 => 'Banque Saudi Fransi',
-            20 => 'Alinma Bank',
-            10 => 'SABB',
-            40 => 'Arab National Bank',
-            70 => 'Bank AlJazira',
-            90 => 'GIB',
-            33 => 'Alawwal Bank',
-            31 => 'Bank Albilad',
-            // Add more banks as needed
+            '05' => 'Alinma Bank',
+            '10' => 'Saudi National Bank',
+            '15' => 'Bank Albilad',
+            '20' => 'Riyad Bank',
+            '30' => 'Arab National Bank',
+            '36' => 'D360 Bank',
+            '45' => 'SABB',
+            '55' => 'Banque Saudi Fransi',
+            '60' => 'Bank AlJazira',
+            '65' => 'Saudi Investment Bank',
+            '78' => 'STC Bank',
+            '80' => 'Al Rajhi Bank',
+            '90' => 'GIB',
         ];
     
         $bankCode = array_rand($bankMap);
