@@ -86,8 +86,11 @@
         <span class="font-semibold">Generated IBAN:</span>
         <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
       </p>
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-gray-600 flex items-center gap-2">
         <span class="font-semibold">Bank:</span>
+        <template x-if="generatedIban">
+          <img :src="bankOptions[Object.keys(bankOptions).find(k => bankOptions[k].name === generatedIban.bank)].logo" alt="Bank logo" class="w-5 h-5 rounded-full" />
+        </template>
         <span x-text="generatedIban ? generatedIban.bank : ''"></span>
       </p>
       <button 
@@ -105,8 +108,8 @@
               x-model="selectedBankCode"
               class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200 bg-white dark:bg-gray-700 text-black dark:text-white">
         <option value="">🎲 Random Bank</option>
-        <template x-for="(name, code) in bankOptions" :key="code">
-          <option :value="code" x-text="name"></option>
+        <template x-for="(bank, code) in bankOptions" :key="code">
+          <option :value="code" x-text="bankOptions[code].name"></option>
         </template>
       </select>
     </div>
@@ -160,19 +163,19 @@
         ibanHistory: [],
         selectedBankCode: '',
         bankOptions: {
-          '5': 'Alinma Bank',
-          '10': 'SNB (Saudi National Bank)',
-          '15': 'Bank Albilad',
-          '20': 'Riyad Bank',
-          '30': 'Arab National Bank',
-          '36': 'D360 Bank',
-          '45': 'SABB',
-          '55': 'Banque Saudi Fransi',
-          '60': 'Bank AlJazira',
-          '65': 'Saudi Investment Bank',
-          '78': 'STC Bank',
-          '80': 'Al Rajhi Bank',
-          '90': 'GIB'
+          '5': { name: 'Alinma Bank', logo: 'logos/alinma.png' },
+          '10': { name: 'SNB (Saudi National Bank)', logo: 'logos/snb.png' },
+          '15': { name: 'Bank Albilad', logo: 'logos/bilad.png' },
+          '20': { name: 'Riyad Bank', logo: 'logos/riyad.png' },
+          '30': { name: 'Arab National Bank', logo: 'logos/anb.png' },
+          '36': { name: 'D360 Bank', logo: 'logos/d360.png' },
+          '45': { name: 'SABB', logo: 'logos/sabb.png' },
+          '55': { name: 'Banque Saudi Fransi', logo: 'logos/fransi.png' },
+          '60': { name: 'Bank AlJazira', logo: 'logos/jazira.png' },
+          '65': { name: 'Saudi Investment Bank', logo: 'logos/saib.png' },
+          '78': { name: 'STC Bank', logo: 'logos/stc.png' },
+          '80': { name: 'Al Rajhi Bank', logo: 'logos/rajhi.png' },
+          '90': { name: 'GIB', logo: 'logos/gib.png' }
         },
         showToast: false,
         toastMessage: '',
@@ -227,7 +230,7 @@
           const checkDigits = this.calculateCheckDigits('SA', bban);
           const iban = 'SA' + checkDigits + bban;
 
-          const bankName = this.bankOptions[bankCode];
+          const bankName = this.bankOptions[bankCode].name;
 
           this.generatedIban = { iban, bank: bankName };
           this.ibanHistory.unshift({ iban, bank: bankName });
