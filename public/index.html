@@ -4,11 +4,14 @@
   lang="en"
   class="transition-colors duration-300"
   x-data="ibanApp()"
-  x-init="init()"
-  x-init="$watch('darkMode', val => {
-    document.documentElement.classList.toggle('dark', val);
-    localStorage.setItem('darkMode', val);
-  })">
+  x-init="
+    init();
+    $watch('darkMode', val => {
+      document.documentElement.classList.toggle('dark', val);
+      localStorage.setItem('darkMode', val);
+    });
+  "
+>
 <head>
   <script>
     let savedPref = localStorage.getItem('darkMode');
@@ -32,13 +35,13 @@
 
     const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
 
-    console.log('[DarkMode] Saved Pref:', savedPref, '| System Prefers Dark:', prefersDark);
+    // console.log('[DarkMode] Saved Pref:', savedPref, '| System Prefers Dark:', prefersDark);
 
     if (useDark) {
       document.documentElement.classList.add('dark');
-      console.log('[DarkMode] ✅ Applied .dark class');
+      // console.log('[DarkMode] ✅ Applied .dark class');
     } else {
-      console.log('[DarkMode] 🌞 Defaulting to light');
+      // console.log('[DarkMode] 🌞 Defaulting to light');
     }
   </script>
   <script>
@@ -70,7 +73,6 @@
       background: linear-gradient(-45deg, #e0f7fa, #f0f4c3, #ffe0b2, #f8bbd0);
       background-size: 400% 400%;
       animation: gradientShift 15s ease infinite;
-      transition: opacity 0.5s;
     }
 
     .dark body::before {
@@ -344,7 +346,7 @@
             stored = null;
           }
           const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
-          document.documentElement.classList.toggle('dark', activeDark);
+          // document.documentElement.classList.toggle('dark', activeDark); // redundant, handled by $watch
           this.darkMode = activeDark;
 
           // Language preference from localStorage
