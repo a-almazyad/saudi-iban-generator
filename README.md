@@ -1,61 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🇸🇦 Saudi IBAN Generator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A simple and elegant Laravel application that generates valid Saudi IBANs with identified banks. Built with modern front-end technologies including Tailwind CSS and Alpine.js, this project provides a responsive UI and real-time client-side interactivity.
 
-## About Laravel
+## ✨ Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- 🔁 Generate valid **Saudi IBANs** in one click
+- 🏦 Detect and display the **corresponding bank**
+- 📋 One-click **copy to clipboard**
+- 🕓 Saves and shows **recent IBAN history**
+- 🌙 Clean, responsive UI styled with **Tailwind CSS**
+- ⚡ Interactive UI powered by **Alpine.js**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ⚙️ Tech Stack
 
-## Learning Laravel
+- **Backend**: Laravel 12 (PHP 8.3+)
+- **Frontend**: Tailwind CSS + Alpine.js
+- **Build Tools**: Vite
+- **Database**: SQLite (used for session & minimal storage)
+- **Deployment**: Compatible with platforms like **Render**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🧪 Local Development
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Clone the repository
+```bash
+git clone https://github.com/a-almazyad/saudi-iban-generator.git
+cd saudi-iban-generator
+```
 
-## Laravel Sponsors
+### 2. Install dependencies
+```bash
+composer install
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Setup environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-### Premium Partners
+### 4. Run locally
+```bash
+php artisan serve
+npm run dev
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+> Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🚀 Deployment
 
-## Code of Conduct
+To deploy the project (e.g., on Render or a similar platform):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Build production assets:**
+   ```bash
+   npm run build
+   ```
 
-## Security Vulnerabilities
+2. **Cache configurations:**
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3. **Ensure `.env` is set correctly for production:**
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://yourdomain.com
+   ```
 
-## License
+4. **Commit built assets if needed for deployment:**
+   ```bash
+   git add public/build
+   git commit -m "Add production build"
+   git push
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📝 License
+
+This project is open-sourced under the MIT License.
+
+---
+
+## 👤 Author
+
+Developed by [Abdullah Almazyad](https://github.com/a-almazyad)
