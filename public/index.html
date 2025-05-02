@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       class="transition-colors duration-300"
-      x-data="{ ...ibanApp(), darkMode: (() => {
-        const stored = localStorage.getItem('darkMode');
-        return stored !== null ? JSON.parse(stored) : window.matchMedia('(prefers-color-scheme: dark)').matches;
-      })() }"
+      x-data="ibanApp()"
       x-init="init()"
       x-init="$watch('darkMode', val => {
         document.documentElement.classList.toggle('dark', val);
@@ -24,6 +21,14 @@
     } else {
       console.log('[DarkMode] 🌞 Defaulting to light');
     }
+  </script>
+  <script>
+    // Watch system changes in real time (outside Alpine scope)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (localStorage.getItem('darkMode') === null) {
+        document.documentElement.classList.toggle('dark', e.matches);
+      }
+    });
   </script>
   <meta charset="UTF-8" />
   <title>Saudi IBAN Generator</title>
@@ -49,7 +54,7 @@
   <div class="bg-white dark:bg-gray-800 dark:text-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transition-colors duration-300">
     <div class="text-right mb-4 text-xs">
       <button @click="toggleTheme()" class="hover:underline">
-        <span x-text="darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'"></span>
+        <span x-text="darkMode ? '🌞 Light' : '🌙 Dark'"></span>
       </button>
     </div>
     <div class="mb-6">
@@ -155,24 +160,20 @@
         showToast: false,
         toastMessage: '',
 
-        darkMode: (() => {
-          const stored = localStorage.getItem('darkMode');
-          return stored !== null ? JSON.parse(stored) : window.matchMedia('(prefers-color-scheme: dark)').matches;
-        })(),
+        darkMode: false,
 
         init() {
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (localStorage.getItem('darkMode') === null) {
-              // Immediately update the <html> class for responsiveness
-              document.documentElement.classList.toggle('dark', e.matches);
-              this.darkMode = e.matches;
-            }
-          });
+          const stored = localStorage.getItem('darkMode');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const activeDark = stored !== null ? JSON.parse(stored) : prefersDark;
+          document.documentElement.classList.toggle('dark', activeDark);
+          this.darkMode = activeDark;
         },
 
         toggleTheme() {
           this.darkMode = !this.darkMode;
           localStorage.setItem('darkMode', this.darkMode);
+          document.documentElement.classList.toggle('dark', this.darkMode);
         },
 
         loadHistory() {
