@@ -5,7 +5,7 @@
   class="transition-colors duration-300"
   x-data="ibanApp()"
   x-init="init(); $watch('darkMode', val => {
-    console.log('[Watcher] darkMode changed to:', val, '. Toggling class and updating localStorage.');
+    // console.log('[Watcher] darkMode changed to:', val, '. Toggling class and updating localStorage.');
     document.documentElement.classList.toggle('dark', val);
     localStorage.setItem('darkMode', val);
     localStorage.setItem('darkModeSetAt', Date.now().toString()); // Timestamp update here
@@ -23,26 +23,26 @@
       localStorage.removeItem('darkMode');
       localStorage.removeItem(expiryKey);
       savedPref = null;
-      console.log('[Head Script] Preference expired or not set.');
+      // console.log('[Head Script] Preference expired or not set.');
     }
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedPref !== 'true' && savedPref !== 'false') {
       localStorage.removeItem('darkMode');
       savedPref = null;
-       console.log('[Head Script] Invalid preference removed.');
+      // console.log('[Head Script] Invalid preference removed.');
     }
     const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
-    console.log('[Head Script] Determining initial class - Use Dark:', useDark, '(Saved:', savedPref, '| System:', prefersDark, ')');
+    // console.log('[Head Script] Determining initial class - Use Dark:', useDark, '(Saved:', savedPref, '| System:', prefersDark, ')');
     if (useDark) {
       document.documentElement.classList.add('dark');
-       console.log('[Head Script] Applied .dark class.');
+      // console.log('[Head Script] Applied .dark class.');
     } else {
-       console.log('[Head Script] Using light mode class.');
+      // console.log('[Head Script] Using light mode class.');
     }
     // System preference listener (only if no user preference is set)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       if (localStorage.getItem('darkMode') === null) {
-         console.log('[Head Script] System preference changed, updating class.');
+        // console.log('[Head Script] System preference changed, updating class.');
         document.documentElement.classList.toggle('dark', e.matches);
       }
     });
@@ -59,6 +59,14 @@
   <!-- Add Feather Icons for button icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
+    @keyframes spinHalf {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(180deg); }
+    }
+
+    .animate-spin-half {
+      animation: spinHalf 0.5s ease-in-out;
+    }
     body::before {
       content: "";
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
@@ -83,6 +91,43 @@
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
     .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
     .dark .custom-scrollbar { scrollbar-color: #4b5563 transparent; }
+
+    /* Animation optimization for history list items */
+    .history-list-item {
+      will-change: opacity, transform;
+    }
+
+    .pulse-highlight {
+      animation: pulseFade 1.5s ease-out;
+    }
+
+    @keyframes pulseFade {
+      0% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.6); /* amber-400 */
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(250, 204, 21, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, 0);
+      }
+    }
+
+    .dark .pulse-highlight {
+      animation: pulseFadeDark 1.5s ease-out;
+    }
+
+    @keyframes pulseFadeDark {
+      0% {
+        box-shadow: 0 0 0 0 rgba(107, 114, 128, 0.4); /* gray-500 */
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(107, 114, 128, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(107, 114, 128, 0);
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-slate-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-screen p-4 transition-colors duration-300">
@@ -137,7 +182,12 @@
       </div>
 
       <!-- IBAN Display Area -->
-      <div class="mb-6 text-left min-h-[110px] flex flex-col justify-center bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+      <div
+        class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300"
+        :class="['transition-all', 'duration-500', 'rounded-lg']"
+        :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'"
+        data-iban-highlight
+      >
         <div>
           <div class="flex justify-between items-start mb-1">
               <p class="text-xs sm:text-sm mb-1 font-semibold text-gray-600 dark:text-gray-300"
@@ -159,12 +209,11 @@
           </p>
           <!-- Bank Name -->
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-2 min-h-[1rem]" :class="lang === 'ar' ? 'text-right' : ''">
-            <span class="font-semibold" x-text="lang === 'en' ? 'Bank:' : 'البنك:'"></span>
-            <span class="ml-1 inline-flex items-center gap-1.5">
-              <template x-if="generatedIban?.bank && bankOptions[selectedBankCode]"> <!-- Show logo based on generation result/selection -->
+            <span class="inline-flex items-center gap-1.5">
+              <template x-if="generatedIban?.bank && bankOptions[selectedBankCode]">
                  <img :src="bankOptions[selectedBankCode]?.logo" alt="" class="w-3 h-3 inline-block" />
               </template>
-              <span x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span> <!-- Show placeholder if nothing generated -->
+              <span x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
             </span>
           </p>
         </div>
@@ -218,9 +267,9 @@
       <button
       @click="generateIban()"
       type="button"
-      class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full hover:opacity-90 transition transform hover:scale-[1.02] active:scale-[0.98] font-semibold flex items-center justify-center gap-2"
+      class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30 hover:scale-100"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
       <span x-text="lang === 'en' ? 'Generate IBAN' : 'توليد آيبان'"></span>
     </button>
     </div>
@@ -239,67 +288,67 @@
             <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
           </button>
        </div>
-      <template x-if="ibanHistory.length">
-        <ul class="text-xs sm:text-sm space-y-1.5">
-          <template x-for="(item, index) in ibanHistory" :key="item.iban + index"> <!-- Added index to key -->
-            <li
-              class="history-list-item p-3 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-2 gap-y-1"
-              :class="{
-                'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
-                'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
-                'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0,
-                'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4,
-                'opacity-60': index === 5, 'opacity-50': index === 6,
-              }"
-              x-transition:enter="transition ease-out duration-300"
-              x-transition:enter-start="opacity-0 transform -translate-y-2"
-              x-transition:enter-end="opacity-100 transform translate-y-0"
-             >
-              <span
-                class="font-mono break-words leading-snug text-gray-800 dark:text-gray-200"
-                x-text="item.iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6')"
-              ></span>
-               <div class="flex items-center min-w-0 gap-1.5 flex-shrink-0" :class="lang === 'ar' ? 'sm:mr-auto' : 'sm:ml-auto'">
-                  <!-- Find logo using the stored English name -->
-                  <template x-if="Object.values(bankOptions).find(b => b.name === item.bank)">
-                    <img
-                      :src="Object.values(bankOptions).find(b => b.name === item.bank)?.logo"
-                      alt=""
-                      class="w-4 h-4 flex-shrink-0"
-                    />
-                  </template>
-                  <span
-                    x-text="lang === 'en' ? item.bank : (Object.values(bankOptions).find(b => b.name === item.bank)?.ar || item.bank)"
-                    class="truncate text-gray-600 dark:text-gray-400 text-xs"
-                    :title="item.bank"
-                    style="max-width: 150px;"
-                  ></span>
-                </div>
-            </li>
-          </template>
-        </ul>
-      </template>
-       <template x-if="!ibanHistory.length">
-            <p class="text-sm text-center text-gray-500 dark:text-gray-400 py-4" x-text="lang === 'en' ? 'No recent IBANs.' : 'لا توجد آيبانات حديثة.'"></p>
-       </template>
+      <div class="min-h-[180px]">
+        <template x-if="ibanHistory.length">
+          <ul class="text-xs sm:text-sm space-y-1.5">
+            <template x-for="(item, index) in ibanHistory" :key="item.iban + index">
+              <li
+                class="history-list-item p-3 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-2 gap-y-1"
+                :class="{
+                  'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
+                  'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
+                  'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0,
+                  'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4,
+                  'opacity-60': index === 5, 'opacity-50': index === 6,
+                }"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+               >
+                <span
+                  class="font-mono break-words leading-snug text-gray-800 dark:text-gray-200"
+                  x-text="item.iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6')"
+                ></span>
+                 <div class="flex items-center min-w-0 gap-1.5 flex-shrink-0" :class="lang === 'ar' ? 'sm:mr-auto' : 'sm:ml-auto'">
+                    <!-- Find logo using the stored English name -->
+                    <template x-if="Object.values(bankOptions).find(b => b.name === item.bank)">
+                      <img
+                        :src="Object.values(bankOptions).find(b => b.name === item.bank)?.logo"
+                        alt=""
+                        class="w-4 h-4 flex-shrink-0"
+                      />
+                    </template>
+                    <span
+                      x-text="lang === 'en' ? item.bank : (Object.values(bankOptions).find(b => b.name === item.bank)?.ar || item.bank)"
+                      class="truncate text-gray-600 dark:text-gray-400 text-xs"
+                      :title="item.bank"
+                      style="max-width: 150px;"
+                    ></span>
+                  </div>
+              </li>
+            </template>
+          </ul>
+        </template>
+        <template x-if="!ibanHistory.length">
+          <p class="text-sm text-center text-gray-500 dark:text-gray-400 pt-10 pb-4" x-text="lang === 'en' ? 'No recent IBANs.' : 'لا توجد آيبانات حديثة.'"></p>
+        </template>
+      </div>
     </div>
 
   </div>
 
   <!-- Footer -->
-  <footer class="text-center w-full py-4 mt-auto">
-    <p class="text-xs text-gray-500 dark:text-gray-400">
-        Developed by
-        <a href="https://github.com/a-almazyad" target="_blank" rel="noopener noreferrer" class="underline hover:text-blue-600 dark:hover:text-blue-400 font-medium">
-        @a-almazyad
-        </a>
-    </p>
+  <footer class="fixed bottom-4 left-4 z-50">
+    <a href="https://github.com/a-almazyad/saudi-iban-generator" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-medium">
+      GitHub Project
+    </a>
   </footer>
 
   <!-- AlpineJS Logic -->
   <script>
     function ibanApp() {
       return {
+        generating: false,
         lang: localStorage.getItem('lang') || 'en',
         generatedIban: null, // Structure: { iban: 'SA...', bank: 'Displayed Bank Name' }
         ibanHistory: [], // Structure: [{ iban: 'SA...', bank: 'English Bank Name' }, ...]
@@ -338,18 +387,18 @@
             localStorage.removeItem('darkMode');
             localStorage.removeItem(expiryKey);
             stored = null;
-            console.log('[DarkMode Init] Preference expired or not set.');
+            // console.log('[DarkMode Init] Preference expired or not set.');
           }
           if (stored !== 'true' && stored !== 'false') {
             localStorage.removeItem('darkMode');
             stored = null;
-             console.log('[DarkMode Init] Invalid preference removed.');
+            // console.log('[DarkMode Init] Invalid preference removed.');
           }
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
           // Set Alpine's reactive property. The watcher will sync the class/localStorage.
           this.darkMode = activeDark;
-          console.log(`[DarkMode Init] Initial Alpine darkMode set to: ${this.darkMode} (Stored: ${stored}, System: ${prefersDark})`);
+          // console.log(`[DarkMode Init] Initial Alpine darkMode set to: ${this.darkMode} (Stored: ${stored}, System: ${prefersDark})`);
 
           // --- Language Initialization ---
           this.lang = localStorage.getItem('lang') || 'en';
@@ -359,15 +408,15 @@
 
           // --- Icons Initialization ---
           this.$nextTick(() => {
-             console.log('[Init] Replacing Feather icons.');
-             feather.replace(); // Initialize icons after Alpine is ready
+            // console.log('[Init] Replacing Feather icons.');
+            feather.replace(); // Initialize icons after Alpine is ready
           });
         },
 
         // Toggles the state, watcher handles the rest
         toggleTheme() {
           this.darkMode = !this.darkMode;
-           console.log(`[toggleTheme] Toggled darkMode state to: ${this.darkMode}`);
+          // console.log(`[toggleTheme] Toggled darkMode state to: ${this.darkMode}`);
         },
 
         loadHistory() {
@@ -377,19 +426,21 @@
             if (Array.isArray(storedHistory) && storedHistory.every(item => typeof item === 'object' && item !== null && item.iban && item.bank)) {
               this.ibanHistory = storedHistory;
             } else {
-              console.warn('[History] Invalid data found in localStorage, clearing.');
+              // console.warn('[History] Invalid data found in localStorage, clearing.');
               this.ibanHistory = [];
               localStorage.removeItem('ibanHistory');
             }
           } catch (e) {
-             console.error('[History] Error parsing history from localStorage:', e);
-             this.ibanHistory = [];
-             localStorage.removeItem('ibanHistory');
+            // console.error('[History] Error parsing history from localStorage:', e);
+            this.ibanHistory = [];
+            localStorage.removeItem('ibanHistory');
           }
-          console.log('[History] Loaded:', this.ibanHistory.length, 'items');
+          // console.log('[History] Loaded:', this.ibanHistory.length, 'items');
         },
 
         generateIban() {
+          this.generating = true;
+          setTimeout(() => { this.generating = false; }, 1000);
           const bankCode = this.selectedBankCode || 'random';
           let actualBankCode = bankCode;
 
@@ -401,9 +452,9 @@
           }
 
           if (!this.bankOptions[actualBankCode]) {
-              console.error(`Invalid bank code selected or generated: ${actualBankCode}`);
-              this.showToastMessage(this.lang === 'en' ? 'Error: Invalid bank.' : 'خطأ: بنك غير صالح.', 'error');
-              return;
+            // console.error(`Invalid bank code selected or generated: ${actualBankCode}`);
+            this.showToastMessage(this.lang === 'en' ? 'Error: Invalid bank.' : 'خطأ: بنك غير صالح.', 'error');
+            return;
           }
 
           const bankInfo = this.bankOptions[actualBankCode];
@@ -416,8 +467,8 @@
           const checkDigits = this.calculateCheckDigits('SA', bban);
 
           if (checkDigits === 'XX') { // Handle calculation error
-             this.showToastMessage(this.lang === 'en' ? 'Error generating IBAN.' : 'خطأ في توليد الآيبان.', 'error');
-             return;
+            this.showToastMessage(this.lang === 'en' ? 'Error generating IBAN.' : 'خطأ في توليد الآيبان.', 'error');
+            return;
           }
 
           const iban = 'SA' + checkDigits + bban;
@@ -426,22 +477,36 @@
 
           this.generatedIban = { iban, bank: actualBankName }; // For display
 
+          // Pulse animation
+          this.$nextTick(() => {
+            const ibanBox = document.querySelector('[data-iban-highlight]');
+            if (ibanBox) {
+              ibanBox.classList.remove('pulse-highlight');
+              void ibanBox.offsetWidth; // Force reflow
+              ibanBox.classList.add('pulse-highlight');
+            }
+          });
+
           this.animateText('animatedBankName', actualBankName, 30, 40);
           this.animateIban('animatedIban', iban, 40, 50);
 
           // Prevent duplicates and update history
           if (!this.ibanHistory.some(item => item.iban === iban)) {
-             this.ibanHistory.unshift({ iban, bank: storedBankName });
-             this.ibanHistory = this.ibanHistory.slice(0, 7);
-             localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
+            this.ibanHistory.unshift({ iban, bank: storedBankName });
+            this.ibanHistory = this.ibanHistory.slice(0, 7);
+            localStorage.setItem('ibanHistory', JSON.stringify(this.ibanHistory));
           }
 
-          // Update dropdown to reflect the actual bank
-          this.$nextTick(() => { this.selectedBankCode = actualBankCode; });
-           console.log(`[Generate] Generated IBAN for ${storedBankName}: ${iban}`);
+          // Update dropdown to reflect the actual bank, unless user selected "Random Bank"
+          this.$nextTick(() => {
+            if (bankCode !== 'random') {
+              this.selectedBankCode = actualBankCode;
+            }
+          });
+          // console.log(`[Generate] Generated IBAN for ${storedBankName}: ${iban}`);
 
-           // Update icons if needed after dynamic changes
-           this.$nextTick(() => feather.replace());
+          // Update icons if needed after dynamic changes
+          this.$nextTick(() => feather.replace());
         },
 
         // Reusable Text Scramble Animation
@@ -534,64 +599,90 @@
 
           // Use chunking for large numbers to avoid BigInt issues in some environments
           try {
-              let remainder = 0;
-              const chunkSize = 9; // Process in chunks smaller than max safe integer digits
-              for (let i = 0; i < converted.length; i += chunkSize) {
-                  const chunk = converted.slice(i, i + chunkSize);
-                  remainder = parseInt(remainder.toString() + chunk, 10) % 97;
-              }
-              const checkDigitValue = 98 - remainder;
-              return checkDigitValue.toString().padStart(2, '0');
+            let remainder = 0;
+            const chunkSize = 9; // Process in chunks smaller than max safe integer digits
+            for (let i = 0; i < converted.length; i += chunkSize) {
+              const chunk = converted.slice(i, i + chunkSize);
+              remainder = parseInt(remainder.toString() + chunk, 10) % 97;
+            }
+            const checkDigitValue = 98 - remainder;
+            return checkDigitValue.toString().padStart(2, '0');
           } catch (e) {
-              console.error("Error calculating check digits with chunking:", e, "Input:", converted);
-               // Fallback to BigInt just in case chunking fails unexpectedly
-               try {
-                 const mod97 = BigInt(converted) % 97n;
-                 return String(98n - mod97).padStart(2, '0');
-               } catch (bigIntError) {
-                 console.error("BigInt calculation also failed:", bigIntError);
-                 return 'XX'; // Indicate error
-               }
+            // console.error("Error calculating check digits with chunking:", e, "Input:", converted);
+            // Fallback to BigInt just in case chunking fails unexpectedly
+            try {
+              const mod97 = BigInt(converted) % 97n;
+              return String(98n - mod97).padStart(2, '0');
+            } catch (bigIntError) {
+              // console.error("BigInt calculation also failed:", bigIntError);
+              return 'XX'; // Indicate error
+            }
           }
         },
 
         copyIban() {
           const ibanToCopy = this.generatedIban?.iban;
-           if (!ibanToCopy) {
-             this.showToastMessage(this.lang === 'en' ? 'Generate an IBAN first.' : 'قم بتوليد آيبان أولاً.', 'info');
-             return;
-           }
+          if (!ibanToCopy) {
+            this.showToastMessage(this.lang === 'en' ? 'Generate an IBAN first.' : 'قم بتوليد آيبان أولاً.', 'info');
+            return;
+          }
 
-           navigator.clipboard.writeText(ibanToCopy)
-             .then(() => {
-               this.showToastMessage(this.lang === 'en' ? 'IBAN copied!' : '!تم نسخ الآيبان', 'success');
-             })
-             .catch(err => {
-                 console.error('Clipboard write failed:', err);
-                 this.showToastMessage(this.lang === 'en' ? 'Failed to copy.' : '.فشل النسخ', 'error');
-             });
+          if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(ibanToCopy)
+              .then(() => {
+                this.showToastMessage(this.lang === 'en' ? 'IBAN copied!' : '!تم نسخ الآيبان', 'success');
+                this.$nextTick(() => feather.replace());
+              })
+              .catch(() => {
+                this.fallbackCopy(ibanToCopy);
+              });
+          } else {
+            this.fallbackCopy(ibanToCopy);
+          }
+        },
+
+        fallbackCopy(text) {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'absolute';
+          textarea.style.left = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            document.execCommand('copy');
+            this.showToastMessage(this.lang === 'en' ? 'IBAN copied!' : '!تم نسخ الآيبان', 'success');
+          } catch {
+            this.showToastMessage(this.lang === 'en' ? 'Failed to copy.' : '.فشل النسخ', 'error');
+          }
+          document.body.removeChild(textarea);
+          this.$nextTick(() => feather.replace());
         },
 
         clearHistory() {
-            const listItems = document.querySelectorAll('.history-list-item'); // Target the li elements
-            if (this.ibanHistory.length === 0) {
-                 this.showToastMessage(this.lang === 'en' ? 'History is already empty' : 'السجل فارغ بالفعل', 'info');
-                 return;
-            }
+          const listItems = document.querySelectorAll('.history-list-item');
+          if (this.ibanHistory.length === 0) {
+            this.showToastMessage(this.lang === 'en' ? 'History is already empty' : 'السجل فارغ بالفعل', 'info');
+            return;
+          }
 
-            // Animate out existing items
-            listItems.forEach((el, i) => {
-                el.style.transition = `opacity 0.2s ease ${i * 0.03}s, transform 0.2s ease ${i * 0.03}s`;
-                el.style.opacity = '0';
-                el.style.transform = 'translateX(-15px)';
+          // Animate out existing items using requestAnimationFrame for accuracy
+          listItems.forEach((el, i) => {
+            el.style.willChange = 'opacity, transform';
+            // Use requestAnimationFrame to ensure layout is up-to-date before applying styles
+            requestAnimationFrame(() => {
+              el.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
+              el.style.opacity = '0';
+              el.style.transform = 'translateY(10px)';
             });
+          });
 
-            // Wait for animation to finish before clearing data and showing toast
-            setTimeout(() => {
-                this.ibanHistory = [];
-                localStorage.removeItem('ibanHistory');
-                this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
-            }, listItems.length * 30 + 200); // Adjust timing based on animation
+          // Wait for animation to finish before clearing data and showing toast
+          setTimeout(() => {
+            this.ibanHistory = [];
+            localStorage.removeItem('ibanHistory');
+            this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
+          }, listItems.length * 30 + 300);
         },
 
         showToastMessage(msg, type = 'info') {
