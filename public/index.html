@@ -154,7 +154,7 @@
             <template x-for="(bank, code) in bankOptions" :key="code">
               <div @click="selectedBankCode = code; dropdownOpen = false"
                    class="flex items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
-                <img :src="bank.logo" alt="" class="w-5 h-5 mr-2" />
+                <img :src="bank.logo" alt="" class="w-5 h-5" :class="lang === 'ar' ? 'ml-2' : 'mr-2'" />
                 <span x-text="lang === 'en' ? bank.name : bank.ar"></span>
               </div>
             </template>
@@ -270,8 +270,7 @@
   '60': { name: 'Bank AlJazira', ar: 'بنك الجزيرة', logo: 'logos/jazira.png' },
   '65': { name: 'Investment Bank', ar: 'البنك السعودي للاستثمار', logo: 'logos/saib.png' },
   '78': { name: 'STC Bank', ar: 'بنك إس تي سي', logo: 'logos/stc.png' },
-  '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', logo: 'logos/rajhi.png' },
-  '90': { name: 'GIB', ar: 'بنك الخليج الدولي', logo: 'logos/gib.png' }
+  '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', logo: 'logos/rajhi.png' }
 },
         showToast: false,
         toastMessage: '',
