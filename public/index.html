@@ -408,7 +408,7 @@ const nameInterval = setInterval(() => {
           if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
             navigator.clipboard.writeText(ibanText)
               .then(() => {
-                this.showToastMessage('IBAN copied to clipboard!');
+                this.showToastMessage('IBAN copied 📂!');
                 this.showCopiedTooltip = true;
                 setTimeout(() => this.showCopiedTooltip = false, 1500);
               })
@@ -424,7 +424,7 @@ const nameInterval = setInterval(() => {
             textarea.select();
             try {
               document.execCommand('copy');
-              this.showToastMessage('IBAN copied to clipboard!');
+              this.showToastMessage('IBAN copied 📂!');
               this.showCopiedTooltip = true;
               setTimeout(() => this.showCopiedTooltip = false, 1500);
             } catch (err) {
@@ -437,7 +437,7 @@ const nameInterval = setInterval(() => {
         clearHistory() {
           this.ibanHistory = [];
           localStorage.removeItem('ibanHistory');
-          this.showToastMessage('History cleared');
+          this.showToastMessage('History cleared 🗑️');
         },
 
         showToastMessage(msg) {
