@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: saudi-iban-generator
+    env: php
+    buildCommand: |
+      composer install --no-dev
+      npm install
+      npm run build
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: php artisan serve --host=0.0.0.0 --port=10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://saudi-iban-generator.onrender.com
