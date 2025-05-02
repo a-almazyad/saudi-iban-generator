@@ -5,7 +5,6 @@
   class="transition-colors duration-300"
   x-data="ibanApp()"
   x-init="init(); $watch('darkMode', val => {
-    // console.log('[Watcher] darkMode changed to:', val, '. Toggling class and updating localStorage.');
     document.documentElement.classList.toggle('dark', val);
     localStorage.setItem('darkMode', val);
     localStorage.setItem('darkModeSetAt', Date.now().toString()); // Timestamp update here
@@ -23,26 +22,18 @@
       localStorage.removeItem('darkMode');
       localStorage.removeItem(expiryKey);
       savedPref = null;
-      // console.log('[Head Script] Preference expired or not set.');
     }
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (savedPref !== 'true' && savedPref !== 'false') {
       localStorage.removeItem('darkMode');
       savedPref = null;
-      // console.log('[Head Script] Invalid preference removed.');
     }
     const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
-    // console.log('[Head Script] Determining initial class - Use Dark:', useDark, '(Saved:', savedPref, '| System:', prefersDark, ')');
     if (useDark) {
       document.documentElement.classList.add('dark');
-      // console.log('[Head Script] Applied .dark class.');
-    } else {
-      // console.log('[Head Script] Using light mode class.');
-    }
     // System preference listener (only if no user preference is set)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       if (localStorage.getItem('darkMode') === null) {
-        // console.log('[Head Script] System preference changed, updating class.');
         document.documentElement.classList.toggle('dark', e.matches);
       }
     });
@@ -56,7 +47,6 @@
     };
   </script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  <!-- Add Feather Icons for button icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
     @keyframes spinHalf {
@@ -387,18 +377,15 @@
             localStorage.removeItem('darkMode');
             localStorage.removeItem(expiryKey);
             stored = null;
-            // console.log('[DarkMode Init] Preference expired or not set.');
           }
           if (stored !== 'true' && stored !== 'false') {
             localStorage.removeItem('darkMode');
             stored = null;
-            // console.log('[DarkMode Init] Invalid preference removed.');
           }
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
           // Set Alpine's reactive property. The watcher will sync the class/localStorage.
           this.darkMode = activeDark;
-          // console.log(`[DarkMode Init] Initial Alpine darkMode set to: ${this.darkMode} (Stored: ${stored}, System: ${prefersDark})`);
 
           // --- Language Initialization ---
           this.lang = localStorage.getItem('lang') || 'en';
@@ -408,7 +395,6 @@
 
           // --- Icons Initialization ---
           this.$nextTick(() => {
-            // console.log('[Init] Replacing Feather icons.');
             feather.replace(); // Initialize icons after Alpine is ready
           });
         },
@@ -416,26 +402,21 @@
         // Toggles the state, watcher handles the rest
         toggleTheme() {
           this.darkMode = !this.darkMode;
-          // console.log(`[toggleTheme] Toggled darkMode state to: ${this.darkMode}`);
         },
 
         loadHistory() {
-          // Make sure history items are valid objects
           try {
             const storedHistory = JSON.parse(localStorage.getItem('ibanHistory') || '[]');
             if (Array.isArray(storedHistory) && storedHistory.every(item => typeof item === 'object' && item !== null && item.iban && item.bank)) {
               this.ibanHistory = storedHistory;
             } else {
-              // console.warn('[History] Invalid data found in localStorage, clearing.');
               this.ibanHistory = [];
               localStorage.removeItem('ibanHistory');
             }
           } catch (e) {
-            // console.error('[History] Error parsing history from localStorage:', e);
             this.ibanHistory = [];
             localStorage.removeItem('ibanHistory');
           }
-          // console.log('[History] Loaded:', this.ibanHistory.length, 'items');
         },
 
         generateIban() {
@@ -498,15 +479,7 @@
           }
 
           // Update dropdown to reflect the actual bank, unless user selected "Random Bank"
-          this.$nextTick(() => {
-            if (bankCode !== 'random') {
-              this.selectedBankCode = actualBankCode;
-            }
-          });
           // console.log(`[Generate] Generated IBAN for ${storedBankName}: ${iban}`);
-
-          // Update icons if needed after dynamic changes
-          this.$nextTick(() => feather.replace());
         },
 
         // Reusable Text Scramble Animation
@@ -608,13 +581,10 @@
             const checkDigitValue = 98 - remainder;
             return checkDigitValue.toString().padStart(2, '0');
           } catch (e) {
-            // console.error("Error calculating check digits with chunking:", e, "Input:", converted);
-            // Fallback to BigInt just in case chunking fails unexpectedly
             try {
               const mod97 = BigInt(converted) % 97n;
               return String(98n - mod97).padStart(2, '0');
             } catch (bigIntError) {
-              // console.error("BigInt calculation also failed:", bigIntError);
               return 'XX'; // Indicate error
             }
           }
@@ -631,7 +601,6 @@
             navigator.clipboard.writeText(ibanToCopy)
               .then(() => {
                 this.showToastMessage(this.lang === 'en' ? 'IBAN copied!' : '!تم نسخ الآيبان', 'success');
-                this.$nextTick(() => feather.replace());
               })
               .catch(() => {
                 this.fallbackCopy(ibanToCopy);
@@ -656,7 +625,6 @@
             this.showToastMessage(this.lang === 'en' ? 'Failed to copy.' : '.فشل النسخ', 'error');
           }
           document.body.removeChild(textarea);
-          this.$nextTick(() => feather.replace());
         },
 
         clearHistory() {
@@ -695,8 +663,6 @@
 
       }
     }
-     // It's generally better to initialize Feather Icons within Alpine's init using $nextTick
-     // document.addEventListener('alpine:initialized', () => { feather.replace(); });
   </script>
 </body>
 </html>
