@@ -105,7 +105,7 @@
       <span x-text="darkMode ? '🌞' : '🌙'" class="text-lg transition-transform duration-200 transform hover:scale-110"></span>
     </button>
     <button 
-      @click="lang = lang === 'en' ? 'ar' : 'en'" 
+      @click="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)" 
       class="w-9 h-9 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
       :title="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
     >
@@ -325,6 +325,12 @@
           const activeDark = stored === 'true' ? true : stored === 'false' ? false : prefersDark;
           document.documentElement.classList.toggle('dark', activeDark);
           this.darkMode = activeDark;
+
+          // Language preference from localStorage
+          const savedLang = localStorage.getItem('lang');
+          if (savedLang === 'ar' || savedLang === 'en') {
+            this.lang = savedLang;
+          }
         },
 
         toggleTheme() {
