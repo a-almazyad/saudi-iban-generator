@@ -1,25 +1,59 @@
 <!DOCTYPE html>
-<html lang="en" x-data="ibanApp()" x-init="loadHistory()">
+<html lang="en"
+      class="transition-colors duration-300"
+      x-data="{ ...ibanApp(), darkMode: (() => {
+        const stored = localStorage.getItem('darkMode');
+        return stored !== null ? JSON.parse(stored) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      })() }"
+      x-init="init()"
+      x-init="$watch('darkMode', val => {
+        document.documentElement.classList.toggle('dark', val);
+        localStorage.setItem('darkMode', val);
+      })">
 <head>
+  <script>
+    const savedPref = localStorage.getItem('darkMode');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const useDark = savedPref === null ? prefersDark : JSON.parse(savedPref);
+
+    console.log('[DarkMode] Saved Pref:', savedPref, '| System Prefers Dark:', prefersDark);
+
+    if (useDark) {
+      document.documentElement.classList.add('dark');
+      console.log('[DarkMode] ✅ Applied .dark class');
+    } else {
+      console.log('[DarkMode] 🌞 Defaulting to light');
+    }
+  </script>
   <meta charset="UTF-8" />
   <title>Saudi IBAN Generator</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    };
+  </script>
   <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen px-4 transition">
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center min-h-screen px-4 transition-colors duration-300">
 
   <!-- Toast -->
   <div 
     x-show="showToast" 
     x-transition 
-    class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-white text-black px-4 py-2 rounded shadow-lg ring-1 ring-gray-300 z-50 text-sm"
+    class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-white text-black dark:bg-gray-700 dark:text-white px-4 py-2 rounded shadow-lg ring-1 ring-gray-300 dark:ring-gray-500 z-50 text-sm"
     x-text="toastMessage"
     x-cloak
   ></div>
 
-  <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transition">
+  <div class="bg-white dark:bg-gray-800 dark:text-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transition-colors duration-300">
+    <div class="text-right mb-4 text-xs">
+      <button @click="toggleTheme()" class="hover:underline">
+        <span x-text="darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'"></span>
+      </button>
+    </div>
     <div class="mb-6">
-      <h1 class="text-xl font-bold flex items-center justify-center gap-2">
+      <h1 class="text-xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white">
         🇸🇦 Saudi IBAN Generator
       </h1>
     </div>
@@ -37,17 +71,17 @@
       <button 
         @click="copyIban()" 
         :disabled="!generatedIban"
-        class="mt-3 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+        class="mt-3 bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
         📋 Copy
       </button>
     </div>
 
     <!-- Bank Selector -->
     <div class="mb-4 text-left">
-      <label for="bankSelector" class="text-sm font-semibold text-gray-700 block mb-1">Choose a bank (optional):</label>
+      <label for="bankSelector" class="text-sm font-semibold text-gray-700 dark:text-gray-300 block mb-1">Choose a bank (optional):</label>
       <select id="bankSelector"
               x-model="selectedBankCode"
-              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200">
+              class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200 bg-white dark:bg-gray-700 text-black dark:text-white">
         <option value="">🎲 Random Bank</option>
         <template x-for="(name, code) in bankOptions" :key="code">
           <option :value="code" x-text="name"></option>
@@ -59,7 +93,7 @@
     <button
       @click="generateIban()"
       type="button"
-      class="w-full text-sm sm:text-base bg-green-600 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
+      class="w-full text-sm sm:text-base bg-green-600 dark:bg-green-800 text-white px-4 py-3 sm:px-6 rounded-full hover:bg-green-700 transition font-semibold"
     >
       🔁 Generate
     </button>
@@ -67,7 +101,7 @@
     <!-- IBAN History -->
     <template x-if="ibanHistory.length">
       <div class="mt-6 text-left">
-        <h2 class="text-sm font-semibold text-gray-700 mb-2 flex justify-between items-center">
+        <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex justify-between items-center">
           <span>Recent IBANs:</span>
           <button @click="clearHistory()" class="text-xs text-red-600 hover:underline">
             🗑️ Clear History
@@ -75,7 +109,7 @@
         </h2>
         <ul class="text-xs sm:text-sm space-y-1">
           <template x-for="item in ibanHistory" :key="item.iban">
-            <li class="font-mono text-gray-700 break-words leading-snug">
+            <li class="font-mono text-gray-700 dark:text-gray-300 break-words leading-snug">
               <div class="flex flex-col sm:flex-row sm:gap-x-2">
                 <span x-text="item.iban"></span>
                 <span class="hidden sm:inline"> – </span>
@@ -89,9 +123,9 @@
   </div>
 
   <!-- Footer -->
-  <footer class="fixed bottom-4 left-4 text-xs text-gray-500">
+  <footer class="fixed bottom-4 left-4 text-xs text-gray-500 dark:text-gray-400">
     Developed by 
-    <a href="https://github.com/a-almazyad" target="_blank" class="underline hover:text-black font-medium">
+    <a href="https://github.com/a-almazyad" target="_blank" class="underline hover:text-black dark:hover:text-white font-medium">
       @a-almazyad
     </a>
   </footer>
@@ -120,6 +154,26 @@
         },
         showToast: false,
         toastMessage: '',
+
+        darkMode: (() => {
+          const stored = localStorage.getItem('darkMode');
+          return stored !== null ? JSON.parse(stored) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        })(),
+
+        init() {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('darkMode') === null) {
+              // Immediately update the <html> class for responsiveness
+              document.documentElement.classList.toggle('dark', e.matches);
+              this.darkMode = e.matches;
+            }
+          });
+        },
+
+        toggleTheme() {
+          this.darkMode = !this.darkMode;
+          localStorage.setItem('darkMode', this.darkMode);
+        },
 
         loadHistory() {
           const stored = JSON.parse(localStorage.getItem('ibanHistory') || '[]');
