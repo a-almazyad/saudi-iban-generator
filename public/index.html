@@ -83,26 +83,30 @@
       </div>
 
       <!-- IBAN Display -->
-      <div class="mb-4 text-left" x-show="generatedIban !== null">
-        <p class="text-sm sm:text-base mb-1">
-          <span class="font-semibold">Generated IBAN:</span>
-          <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
-        </p>
-        <p class="text-sm text-gray-600">
-          <span class="font-semibold">Bank:</span>
-          <span class="ml-1" x-text="generatedIban ? generatedIban.bank : ''"></span>
-        </p>
-        <div class="relative inline-block mt-3">
-          <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
-            Copied!
+      <div class="mb-4 text-left h-[120px] flex flex-col justify-center" x-show="true">
+        <template x-if="generatedIban !== null">
+          <div>
+            <p class="text-sm sm:text-base mb-1">
+              <span class="font-semibold">Generated IBAN:</span>
+              <span id="iban-text" x-ref="ibanText" class="text-blue-700 font-mono break-words" x-text="generatedIban ? generatedIban.iban : ''"></span>
+            </p>
+            <p class="text-sm text-gray-600">
+              <span class="font-semibold">Bank:</span>
+              <span class="ml-1" x-text="generatedIban ? generatedIban.bank : ''"></span>
+            </p>
+            <div class="relative inline-block mt-3">
+              <div x-show="showCopiedTooltip" x-transition class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 shadow-lg">
+                Copied!
+              </div>
+              <button 
+                @click="copyIban()" 
+                :disabled="!generatedIban"
+                class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                📋 Copy
+              </button>
+            </div>
           </div>
-          <button 
-            @click="copyIban()" 
-            :disabled="!generatedIban"
-            class="bg-blue-600 dark:bg-blue-800 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-            📋 Copy
-          </button>
-        </div>
+        </template>
       </div>
 
       <!-- Bank Selector -->
