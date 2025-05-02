@@ -61,6 +61,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-0 px-4 transition-colors duration-300">
 
+
   <!-- Toast -->
   <div 
     x-show="showToast" 
@@ -205,7 +206,7 @@
                     x-text="item.iban"
                   ></span>
                   <span class="hidden sm:inline">–</span>
-                  <div class="flex items-center gap-1 min-w-0">
+                  <div class="flex items-center min-w-0" :class="lang === 'ar' ? 'gap-2' : 'gap-1'">
                     <template x-if="Object.entries(bankOptions).some(([_, b]) => b.name === item.bank || b.ar === item.bank)">
                       <template x-if="!item.bank.includes('Random') && !item.bank.includes('عشوائي')">
                         <img 
