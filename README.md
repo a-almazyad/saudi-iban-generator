@@ -1,13 +1,8 @@
 # 🇸🇦 Saudi IBAN Generator
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/github/license/a-almazyad/saudi-iban-generator)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
 
 🔗 [Live Demo](https://saudi-iban-generator.onrender.com/)
-
-## 🖼️ Preview
-
-![screenshot](public/IBAN.png)
 
 ## ✨ Features
 
@@ -20,7 +15,29 @@
 - 🌐 Supports **English & Arabic** with RTL switching
 - 🎨 Animated UI using **Tailwind CSS** + **Alpine.js**
 
+## 🖼️ Preview
+
+![screenshot](public/IBAN.png)
+
 ---
+
+## 🛠️ How It Works
+
+- The app generates a valid Saudi IBAN by constructing a BBAN (Basic Bank Account Number) based on the selected or random bank code and a randomly generated account number.
+- The IBAN check digits are calculated using the standard modulo 97 method.
+- The selected bank's logo and name are displayed and stored alongside the IBAN in the local history (stored in localStorage).
+- The app uses Alpine.js for interactivity and Tailwind CSS for styling and transitions.
+
+---
+
+## 🌍 Localization
+
+- The app supports both English and Arabic.
+- It automatically adjusts the layout for right-to-left (RTL) display when Arabic is selected.
+- Language preference is stored in localStorage for persistence across sessions.
+
+---
+
 
 ## 🧰 Tech Stack
 
@@ -69,34 +86,6 @@ python3 -m http.server 8080
 
 Or just open `public/index.html` directly.
 
----
-
-## 📁 Project Structure
-
-```
-saudi-iban-generator/
-├── public/
-│   ├── index.html
-│   ├── logos/
-│   ├── IBAN.png
-│   └── version.txt
-├── README.md
-```
-
----
-
-## 🛠️ How It Works
-
-- The app generates a valid Saudi IBAN by constructing a BBAN (Basic Bank Account Number) based on the selected or random bank code and a randomly generated account number.
-- The IBAN check digits are calculated using the standard modulo 97 method.
-- The selected bank's logo and name are displayed and stored alongside the IBAN in the local history (stored in localStorage).
-- The app uses Alpine.js for interactivity and Tailwind CSS for styling and transitions.
-
-## 🌍 Localization
-
-- The app supports both English and Arabic.
-- It automatically adjusts the layout for right-to-left (RTL) display when Arabic is selected.
-- Language preference is stored in localStorage for persistence across sessions.
 
 ---
 
