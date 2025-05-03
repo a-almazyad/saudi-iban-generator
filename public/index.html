@@ -6,32 +6,72 @@
   x-data="ibanApp()"
   x-init="init(); $watch('darkMode', val => {
     document.documentElement.classList.toggle('dark', val);
-    localStorage.setItem('darkMode', val);
-    localStorage.setItem('darkModeSetAt', Date.now().toString()); // Timestamp update here
+    if (this.manualToggle) {
+      localStorage.setItem('darkMode', val);
+      localStorage.setItem('darkModeSetAt', Date.now().toString());
+    }
   })"
 >
 <head>
+    <script>
+      // Improved dark mode logic (no 24h lockout)
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      console.log('[System Prefers Dark]', prefersDark);
+
+      const manualOverride = localStorage.getItem('darkMode');
+      let useDark;
+
+      if (manualOverride === 'true' || manualOverride === 'false') {
+        useDark = manualOverride === 'true';
+        console.log('[Manual Dark Mode]', useDark);
+      } else {
+        useDark = prefersDark;
+        console.log('[Using System Preference]', useDark);
+      }
+
+      document.documentElement.classList.toggle('dark', useDark);
+    </script>
   <script>
-    // Initial dark mode check (runs before Alpine)
-    let savedPref = localStorage.getItem('darkMode');
-    const expiryKey = 'darkModeSetAt';
-    const now = Date.now();
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-    const lastSet = parseInt(localStorage.getItem(expiryKey), 10);
-    if (!lastSet || now - lastSet > maxAge) {
-      localStorage.removeItem('darkMode');
-      localStorage.removeItem(expiryKey);
-      savedPref = null;
-    }
+    // Improved dark mode logic (no 24h lockout)
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedPref !== 'true' && savedPref !== 'false') {
-      localStorage.removeItem('darkMode');
-      savedPref = null;
+    console.log('[System Prefers Dark]', prefersDark);
+
+    const manualOverride = localStorage.getItem('darkMode');
+    let useDark;
+
+    if (manualOverride === 'true' || manualOverride === 'false') {
+      useDark = manualOverride === 'true';
+      console.log('[Manual Dark Mode]', useDark);
+    } else {
+      useDark = prefersDark;
+      console.log('[Using System Preference]', useDark);
     }
-    const useDark = savedPref === 'true' ? true : savedPref === 'false' ? false : prefersDark;
-    if (useDark) {
-      document.documentElement.classList.add('dark');
-    }
+
+    document.documentElement.classList.toggle('dark', useDark);
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      console.log('[MatchMedia Event Triggered]');
+      console.log('Event:', e);
+      console.log('Current document dark class:', document.documentElement.classList.contains('dark'));
+      const rootScope = document.querySelector('[x-data]');
+      console.log('Alpine data darkMode value (before):', rootScope?.__x?.$data?.darkMode);
+      console.log('New prefers-color-scheme (dark):', e.matches);
+      const prefersDarkNow = e.matches;
+      const manualOverride = localStorage.getItem('darkMode');
+      console.log('Manual override status:', manualOverride);
+
+      // Only apply system change if no manual override is set
+      if (manualOverride !== 'true' && manualOverride !== 'false') {
+        document.documentElement.classList.toggle('dark', prefersDarkNow);
+        const rootScope = document.querySelector('[x-data]');
+        if (rootScope && rootScope.__x && rootScope.__x.$data) {
+          rootScope.__x.$data.darkMode = prefersDarkNow;
+          console.log('Alpine data darkMode value (after):', rootScope?.__x?.$data?.darkMode);
+          console.log('Document dark class (after toggle):', document.documentElement.classList.contains('dark'));
+          console.log('[Alpine DarkMode Reactive Updated]', prefersDarkNow);
+        }
+      }
+    });
   </script>
   <meta charset="UTF-8" />
   <title>Saudi IBAN Generator</title>
@@ -114,6 +154,7 @@
       }
     }
   </style>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 <body class="bg-gray-100 text-gray-800 dark:bg-slate-900 dark:text-gray-100 flex flex-col items-center justify-center min-h-screen p-4 transition-colors duration-300">
 
@@ -337,6 +378,7 @@
   <script>
     function ibanApp() {
       return {
+        manualToggle: false,
         generating: false,
         lang: localStorage.getItem('lang') || 'en',
         generatedIban: null, // Structure: { iban: 'SA...', bank: 'Displayed Bank Name' }
@@ -365,6 +407,23 @@
         toastTimeout: null, // To manage the toast timer
 
         init() {
+          // --- Dark Mode Initialization ---
+          const manual = localStorage.getItem('darkMode');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+          if (manual === null) {
+            this.darkMode = prefersDark;
+            this.manualToggle = false;
+          } else {
+            this.darkMode = manual === 'true';
+            this.manualToggle = true;
+          }
+
+          console.log('[Init] darkMode:', this.darkMode, '| manualToggle:', this.manualToggle);
+          this.$nextTick(() => {
+            document.documentElement.classList.toggle('dark', this.darkMode);
+          });
+
           // --- Language Initialization ---
           this.lang = localStorage.getItem('lang') || 'en';
 
@@ -373,28 +432,38 @@
 
           // --- Icons Initialization ---
           this.$nextTick(() => {
-            feather.replace(); // Initialize icons after Alpine is ready
-          });
-
-          // System preference listener (only if no user preference is set)
-          if (localStorage.getItem('darkMode') === null) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-              document.documentElement.classList.toggle('dark', e.matches);
+            requestAnimationFrame(() => {
+              const featherElements = document.querySelectorAll('[data-feather]');
+              if (featherElements.length > 0) {
+                try {
+                  featherElements.forEach(el => {
+                    const iconName = el.getAttribute('data-feather');
+                    const svg = feather.icons[iconName]?.toSvg();
+                    if (svg) {
+                      const tempContainer = document.createElement('div');
+                      tempContainer.innerHTML = svg;
+                      const svgNode = tempContainer.firstChild;
+                      if (svgNode && svgNode.nodeType === Node.ELEMENT_NODE) {
+                        el.replaceWith(svgNode);
+                      }
+                    }
+                  });
+                } catch (e) {
+                  console.error('[Feather Replace Error]', e);
+                }
+              } else {
+                console.warn('[Feather Replace] No feather icons found in DOM');
+              }
             });
-          }
-
-          // Cleanup intervals when the component is destroyed
-          this.$watch('$el', (el, oldEl) => {
-            if (!el) {
-              if (window.animatedBankNameInterval) clearInterval(window.animatedBankNameInterval);
-              if (window.animatedIbanInterval) clearInterval(window.animatedIbanInterval);
-            }
           });
         },
 
         // Toggles the state, watcher handles the rest
         toggleTheme() {
+          this.manualToggle = true;
           this.darkMode = !this.darkMode;
+          console.log('[Toggle] darkMode is now:', this.darkMode);
+          console.log('[Toggle] HTML classes:', document.documentElement.className);
         },
 
         loadHistory() {
