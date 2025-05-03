@@ -85,6 +85,29 @@ saudi-iban-generator/
 
 ---
 
-## 👤 Author
+## 🛠️ How It Works
 
-Made with 💚 by [Abdullah Almazyad](https://github.com/a-almazyad)
+- The app generates a valid Saudi IBAN by constructing a BBAN (Basic Bank Account Number) based on the selected or random bank code and a randomly generated account number.
+- The IBAN check digits are calculated using the standard modulo 97 method.
+- The selected bank's logo and name are displayed and stored alongside the IBAN in the local history (stored in localStorage).
+- The app uses Alpine.js for interactivity and Tailwind CSS for styling and transitions.
+
+## 🌍 Localization
+
+- The app supports both English and Arabic.
+- It automatically adjusts the layout for right-to-left (RTL) display when Arabic is selected.
+- Language preference is stored in localStorage for persistence across sessions.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions, improvements, or bug fixes, please fork the repo and open a pull request.
+
+1. Fork this repository
+2. Create a branch: `git checkout -b feature/YourFeature`
+3. Commit your changes: `git commit -m 'Add your message'`
+4. Push to your branch: `git push origin feature/YourFeature`
+5. Open a pull request
+
+Please ensure your code is clean and adheres to the existing style.
