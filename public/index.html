@@ -135,6 +135,12 @@
         box-shadow: 0 0 0 0 rgba(107, 114, 128, 0);
       }
     }
+
+    /* IBAN text styling for history */
+    .iban-text {
+      min-width: 260px;
+      font-size: 0.93rem;
+    }
   </style>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🇸🇦</text></svg>">
 </head>
@@ -240,13 +246,13 @@
           <button @click="dropdownOpen = !dropdownOpen" type="button"
                class="w-full cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 text-sm flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition">
             <div class="flex items-center gap-2">
-              <template x-if="selectedBankCode && bankOptions[selectedBankCode]">
-                <img :src="bankOptions[selectedBankCode].logo" alt="Logo" class="w-5 h-5" />
+              <template x-if="computedBank()">
+                <img :src="computedBank().logo" alt="Logo" class="w-5 h-5" />
               </template>
               <template x-if="!selectedBankCode">
                 <span class="text-lg">🎲</span>
               </template>
-              <span x-text="selectedBankCode ? (lang === 'en' ? bankOptions[selectedBankCode].name : bankOptions[selectedBankCode].ar) : (lang === 'en' ? 'Random Bank' : 'بنك عشوائي')"></span>
+              <span x-text="computedBank() ? (lang === 'en' ? computedBank().name : computedBank().ar) : (lang === 'en' ? 'Random Bank' : 'بنك عشوائي')"></span>
             </div>
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-200" :class="{ 'rotate-180': dropdownOpen }"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
@@ -279,7 +285,7 @@
       <button
       @click="generateIban()"
       type="button"
-      class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30 hover:scale-100"
+      class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin-half" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       <span x-text="lang === 'en' ? 'Generate IBAN' : 'توليد آيبان'"></span>
@@ -287,7 +293,7 @@
     </div>
 
     <!-- History Section -->
-    <div class="w-full max-w-md text-left mt-8 px-2">
+    <div class="w-full max-w-md text-left mt-8 px-1">
        <div class="flex justify-between items-center mb-3">
          <h2 class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent IBANs:' : 'الآيبانات الأخيرة:'"></h2>
           <button
@@ -318,27 +324,23 @@
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                >
                 <span
-                  class="font-mono break-keep leading-snug text-gray-800 dark:text-gray-200 text-sm truncate"
-                  style="min-width: 260px; font-size: 0.93rem;"
-                  x-text="item.iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6')"
+                  class="iban-text font-mono break-keep leading-snug text-gray-800 dark:text-gray-200 text-sm truncate"
+                  x-text="formatIban(item.iban)"
                 ></span>
-                <div class="flex items-center gap-2 min-w-[160px] sm:ml-auto sm:mr-0">
-                  <div class="w-4 h-4 flex items-center justify-center flex-shrink-0">
-                    <template x-if="Object.values(bankOptions).find(b => b.name === item.bank)">
-                      <img
-                        :src="Object.values(bankOptions).find(b => b.name === item.bank)?.logo"
-                        alt=""
-                        class="w-4 h-4 object-contain block"
-                      />
-                    </template>
-                  </div>
-                  <div class="flex-1">
-                    <span
-                      x-text="lang === 'en' ? item.bank : (Object.values(bankOptions).find(b => b.name === item.bank)?.ar || item.bank)"
-                      class="truncate text-gray-600 dark:text-gray-400 text-xs block"
-                      :title="item.bank"
-                    ></span>
-                  </div>
+                <div class="flex items-center gap-2 min-w-[160px]" :class="lang === 'ar' ? 'flex-row-reverse text-right'">
+                  <template x-if="Object.values(bankOptions).find(b => b.name === item.bank)">
+                    <img
+                      :src="Object.values(bankOptions).find(b => b.name === item.bank)?.logo"
+                      alt=""
+                      class="w-4 h-4 object-contain block"
+                    />
+                  </template>
+                  <span
+                    x-text="lang === 'en' ? item.bank : (Object.values(bankOptions).find(b => b.name === item.bank)?.ar || item.bank)"
+                    class="truncate text-gray-600 dark:text-gray-400 text-xs block"
+                    :title="item.bank"
+                  ></span>
+                </div>
                 </div>
               </li>
             </template>
@@ -363,6 +365,15 @@
   <script>
     function ibanApp() {
       return {
+        // Formats IBAN for display in history
+        formatIban(iban) {
+          return iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6');
+        },
+
+        // Returns selected bank object or null
+        computedBank() {
+          return this.bankOptions[this.selectedBankCode] || null;
+        },
         manualToggle: false,
         generating: false,
         lang: localStorage.getItem('lang') || 'en',
@@ -404,6 +415,7 @@
             this.manualToggle = true;
           }
 
+          // Debug log — remove before production
           console.log('[Init] darkMode:', this.darkMode, '| manualToggle:', this.manualToggle);
           this.$nextTick(() => {
             document.documentElement.classList.toggle('dark', this.darkMode);
@@ -421,6 +433,7 @@
         toggleTheme() {
           this.manualToggle = true;
           this.darkMode = !this.darkMode;
+          // Debug log for theme state — comment out for production
           console.log('[Toggle] darkMode is now:', this.darkMode);
           console.log('[Toggle] HTML classes:', document.documentElement.className);
         },
@@ -699,9 +712,10 @@
       fetch('/version.txt')
         .then(res => res.text())
         .then(v => {
-          console.log('[Version Fetched]', v); // New debug log
+          // Debug log — remove before production
+          console.log('[Version Fetched]', v);
           const el = document.getElementById('version-code');
-          if (el) el.textContent = v.trim();
+          if (el) el.textContent = v.trim() || 'v1.0.0-dev';
           else console.warn('[Version] Element #version-code not found.');
         })
         .catch(err => {
