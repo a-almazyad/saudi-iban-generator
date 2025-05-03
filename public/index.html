@@ -30,51 +30,34 @@
       }
 
       document.documentElement.classList.toggle('dark', useDark);
-    </script>
-  <script>
-    // Improved dark mode logic (no 24h lockout)
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    console.log('[System Prefers Dark]', prefersDark);
 
-    const manualOverride = localStorage.getItem('darkMode');
-    let useDark;
-
-    if (manualOverride === 'true' || manualOverride === 'false') {
-      useDark = manualOverride === 'true';
-      console.log('[Manual Dark Mode]', useDark);
-    } else {
-      useDark = prefersDark;
-      console.log('[Using System Preference]', useDark);
-    }
-
-    document.documentElement.classList.toggle('dark', useDark);
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      console.log('[MatchMedia Event Triggered]');
-      console.log('Event:', e);
-      console.log('Current document dark class:', document.documentElement.classList.contains('dark'));
-      const rootScope = document.querySelector('[x-data]');
-      console.log('Alpine data darkMode value (before):', rootScope?.__x?.$data?.darkMode);
-      console.log('New prefers-color-scheme (dark):', e.matches);
-      const prefersDarkNow = e.matches;
-      const manualOverride = localStorage.getItem('darkMode');
-      console.log('Manual override status:', manualOverride);
-
-      // Only apply system change if no manual override is set
-      if (manualOverride !== 'true' && manualOverride !== 'false') {
-        document.documentElement.classList.toggle('dark', prefersDarkNow);
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        console.log('[MatchMedia Event Triggered]');
+        console.log('Event:', e);
+        console.log('Current document dark class:', document.documentElement.classList.contains('dark'));
         const rootScope = document.querySelector('[x-data]');
-        if (rootScope && rootScope.__x && rootScope.__x.$data) {
-          rootScope.__x.$data.darkMode = prefersDarkNow;
-          console.log('Alpine data darkMode value (after):', rootScope?.__x?.$data?.darkMode);
-          console.log('Document dark class (after toggle):', document.documentElement.classList.contains('dark'));
-          console.log('[Alpine DarkMode Reactive Updated]', prefersDarkNow);
+        console.log('Alpine data darkMode value (before):', rootScope?.__x?.$data?.darkMode);
+        console.log('New prefers-color-scheme (dark):', e.matches);
+        const prefersDarkNow = e.matches;
+        const manualOverride = localStorage.getItem('darkMode');
+        console.log('Manual override status:', manualOverride);
+
+        // Only apply system change if no manual override is set
+        if (manualOverride !== 'true' && manualOverride !== 'false') {
+          document.documentElement.classList.toggle('dark', prefersDarkNow);
+          const rootScope = document.querySelector('[x-data]');
+          if (rootScope && rootScope.__x && rootScope.__x.$data) {
+            rootScope.__x.$data.darkMode = prefersDarkNow;
+            console.log('Alpine data darkMode value (after):', rootScope?.__x?.$data?.darkMode);
+            console.log('Document dark class (after toggle):', document.documentElement.classList.contains('dark'));
+            console.log('[Alpine DarkMode Reactive Updated]', prefersDarkNow);
+          }
         }
-      }
-    });
-  </script>
+      });
+    </script>
   <meta charset="UTF-8" />
   <title>Saudi IBAN Generator</title>
+  <!-- TODO: Replace this CDN link with Tailwind CLI in production for better performance -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -434,7 +417,7 @@
           this.$nextTick(() => {
             requestAnimationFrame(() => {
               const featherElements = document.querySelectorAll('[data-feather]');
-              if (featherElements.length > 0) {
+              if (typeof feather !== 'undefined' && featherElements.length > 0) {
                 try {
                   featherElements.forEach(el => {
                     const iconName = el.getAttribute('data-feather');
@@ -728,6 +711,26 @@
 
       }
     }
+  </script>
+
+</div>
+  <!-- Version reference (moved inside body, before </body>) -->
+  <div class="fixed bottom-4 right-4 text-xs text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded shadow-sm z-50">
+    Version: <span id="version-code">Loading...</span>
+  </div>
+  <script>
+    window.addEventListener('load', () => {
+      fetch('/version.txt')
+        .then(res => res.text())
+        .then(v => {
+          const el = document.getElementById('version-code');
+          if (el) el.textContent = v.trim();
+          else console.warn('[Version] Element #version-code not found.');
+        })
+        .catch(err => {
+          console.warn('[Version Fetch Error]', err);
+        });
+    });
   </script>
 </body>
 </html>
