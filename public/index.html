@@ -305,7 +305,7 @@
           <ul class="text-xs sm:text-sm space-y-1.5">
             <template x-for="(item, index) in ibanHistory" :key="item.iban + index">
               <li
-                class="history-list-item p-3 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-2 gap-y-1"
+                class="history-list-item p-2 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-6 gap-y-1"
                 :class="{
                   'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
                   'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
@@ -318,25 +318,28 @@
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                >
                 <span
-                  class="font-mono break-words leading-snug text-gray-800 dark:text-gray-200"
+                  class="font-mono break-keep leading-snug text-gray-800 dark:text-gray-200 text-sm truncate"
+                  style="min-width: 260px; font-size: 0.93rem;"
                   x-text="item.iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6')"
                 ></span>
-                 <div class="flex items-center min-w-0 gap-1.5 flex-shrink-0" :class="lang === 'ar' ? 'sm:mr-auto' : 'sm:ml-auto'">
-                    <!-- Find logo using the stored English name -->
+                <div class="flex items-center gap-2 min-w-[160px] sm:ml-auto sm:mr-0">
+                  <div class="w-4 h-4 flex items-center justify-center flex-shrink-0">
                     <template x-if="Object.values(bankOptions).find(b => b.name === item.bank)">
                       <img
                         :src="Object.values(bankOptions).find(b => b.name === item.bank)?.logo"
                         alt=""
-                        class="w-4 h-4 flex-shrink-0"
+                        class="w-4 h-4 object-contain block"
                       />
                     </template>
+                  </div>
+                  <div class="flex-1">
                     <span
                       x-text="lang === 'en' ? item.bank : (Object.values(bankOptions).find(b => b.name === item.bank)?.ar || item.bank)"
-                      class="truncate text-gray-600 dark:text-gray-400 text-xs"
+                      class="truncate text-gray-600 dark:text-gray-400 text-xs block"
                       :title="item.bank"
-                      style="max-width: 150px;"
                     ></span>
                   </div>
+                </div>
               </li>
             </template>
           </ul>
