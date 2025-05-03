@@ -1,61 +1,73 @@
 # 🇸🇦 Saudi IBAN Generator
 
-A fast and lightweight static web app to generate valid Saudi IBANs with the correct bank identifier. Designed for simplicity and performance with no backend dependencies.
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/github/license/a-almazyad/saudi-iban-generator)
+
+🔗 [Live Demo](https://saudi-iban-generator.onrender.com/)
+
+## 🖼️ Preview
+
+![screenshot](public/IBAN.png)
 
 ## ✨ Features
 
-- 🔁 Generate valid **Saudi IBANs** instantly
-- 🏦 Choose a specific bank or let the app select one randomly
-- 🏦 Detect and display the **corresponding bank name**
-- 📋 One-click **copy to clipboard**
-- 🕓 Store and display **recent IBAN history** in the browser
-- 🎨 Styled using **Tailwind CSS** via CDN
-- ⚡ Reactive interactivity with **Alpine.js**
+- 🔢 Generate valid **Saudi IBANs**
+- 🏦 Choose or randomize banks (with logos)
+- 🧠 Auto-detect and display **bank name**
+- 📋 One-click **copy to clipboard** with feedback
+- 🕓 Store and display **recent IBANs** (localStorage)
+- 🌙 Fully supports **dark/light mode** with OS theme detection
+- 🌐 Supports **English & Arabic** with RTL switching
+- 🎨 Animated UI using **Tailwind CSS** + **Alpine.js**
 
 ---
 
 ## 🧰 Tech Stack
 
 - **Frontend**: HTML, Tailwind CSS (CDN), Alpine.js (CDN)
-- **No Backend Required**: Runs entirely in the browser
+- **No Backend Required**: Pure static app
 
 ---
 
-## 🚀 Deployment
+## 🚀 Deployment Options
 
-This is a pure static site. You can deploy it using:
+This is a static app. You can deploy it with:
 
 - GitHub Pages
 - Netlify
-- Render (as a Static Site)
+- Render
 - Vercel
 
+### Deployment Settings
 
-### ⚙️ Deployment Instructions
+#### 🔹 Render
+- Type: Static Site
+- Build command: *(leave blank)*
+- Publish directory: `public`
 
-#### Render
-- **Service type**: Static Site
-- **Build command**: *(leave blank)*
-- **Publish directory**: `public`
+#### 🔹 GitHub Pages
+- Use `public` folder as the source
+- Recommended: `gh-pages` branch or GitHub Actions
 
-#### GitHub Pages
-- Use the `public` folder as the source.
-- Recommended: use a branch like `gh-pages` or deploy via GitHub Actions.
+#### 🔹 Netlify
+- Build command: *(leave blank)*
+- Publish directory: `public`
 
-#### Netlify
-- **Build command**: *(leave blank)*
-- **Publish directory**: `public`
-- Drag and drop the `public` folder in the Netlify UI or connect a Git repo.
-
-#### Vercel
-- Import the project and set the `public` directory as the output directory.
-- **Framework preset**: Other
+#### 🔹 Vercel
+- Output directory: `public`
+- Preset: Other
 
 ---
 
 ## ▶️ Running Locally
 
-Simply open the `public/index.html` file in your browser. No build or dev server needed.
+```bash
+cd public
+python3 -m http.server 8080
+# Then open http://localhost:8080 in your browser
+```
+
+Or just open `public/index.html` directly.
 
 ---
 
@@ -64,7 +76,10 @@ Simply open the `public/index.html` file in your browser. No build or dev server
 ```
 saudi-iban-generator/
 ├── public/
-│   └── index.html
+│   ├── index.html
+│   ├── logos/
+│   ├── IBAN.png
+│   └── version.txt
 ├── README.md
 ```
 
@@ -72,4 +87,4 @@ saudi-iban-generator/
 
 ## 👤 Author
 
-Developed by [Abdullah Almazyad](https://github.com/a-almazyad)
+Made with 💚 by [Abdullah Almazyad](https://github.com/a-almazyad)
