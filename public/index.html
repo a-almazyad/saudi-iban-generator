@@ -176,11 +176,12 @@
              x-ref="ibanText"
              x-text="animatedIban.length ? formatIban(animatedIban.join('')) : 'SA XX XXXX XXXX XXXX XXXX XXXX'">
           </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2 min-h-[1rem] flex items-center gap-1.5" :class="lang === 'ar' ? 'justify-end' : 'justify-start'">
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2 min-h-[1rem] flex items-center gap-1.5"
+             :class="lang === 'ar' ? 'justify-start flex-row-reverse text-right' : 'justify-start text-left'">
               <template x-if="generatedIban?.bankCode && bankOptions[generatedIban.bankCode]">
                  <img :src="bankOptions[generatedIban.bankCode]?.logo" :alt="lang === 'en' ? bankOptions[generatedIban.bankCode].name + ' logo' : 'شعار ' + bankOptions[generatedIban.bankCode].ar" class="w-3 h-3 inline-block object-contain flex-shrink-0" />
               </template>
-              <span class="truncate" x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
+              <span class="truncate" :class="lang === 'ar' ? 'text-left w-full text-sm text-gray-600 dark:text-gray-400' : 'text-sm text-gray-600 dark:text-gray-400'" x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
           </p>
         </div>
       </div>
@@ -305,7 +306,7 @@
                    </button>
                  </div>
 
-                <div class="flex items-center gap-2 flex-shrink-0 sm:min-w-[150px]" :class="lang === 'ar' ? 'justify-end' : 'justify-start'">
+                <div class="flex items-center gap-2 flex-shrink-0 sm:min-w-[150px]">
                    <template x-if="getBankInfoByName(item.bank)">
                      <img
                        :src="getBankInfoByName(item.bank)?.logo"
