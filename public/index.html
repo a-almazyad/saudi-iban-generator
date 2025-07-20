@@ -143,7 +143,16 @@
 
   <main class="w-full max-w-md flex flex-col items-center space-y-8 pt-16 pb-24 px-2 sm:px-0">
 
-    <section aria-labelledby="generator-heading" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md dark:text-white p-6 sm:p-8 rounded-2xl shadow-xl w-full text-center transition-all duration-300 flex flex-col">
+    <div class="mb-4 flex w-full" :class="lang === 'ar' ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'" role="tablist">
+      <button @click="activeTab='iban'" :class="activeTab==='iban' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'" class="flex-1 py-2 rounded-full text-sm font-medium focus:outline-none">
+        <span x-text="lang === 'en' ? 'IBAN Generator' : 'مولد الآيبان'"></span>
+      </button>
+      <button @click="activeTab='card'" :class="activeTab==='card' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'" class="flex-1 py-2 rounded-full text-sm font-medium focus:outline-none">
+        <span x-text="lang === 'en' ? 'Credit Card Generator' : 'مولد البطاقات'"></span>
+      </button>
+    </div>
+
+    <section x-show="activeTab==='iban'" aria-labelledby="generator-heading" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md dark:text-white p-6 sm:p-8 rounded-2xl shadow-xl w-full text-center transition-all duration-300 flex flex-col" x-cloak>
       <div class="mb-6">
         <h1 id="generator-heading" class="text-2xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white"
             x-text="lang === 'en' ? '🇸🇦 Saudi IBAN Generator' : 'مولد الآيبان السعودي 🇸🇦'">
@@ -258,7 +267,62 @@
       </button>
     </section>
 
-    <section aria-labelledby="history-heading" class="w-full max-w-md text-left mt-8 px-1">
+
+    <section x-show="activeTab==='card'" aria-labelledby="card-heading" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md dark:text-white p-6 sm:p-8 rounded-2xl shadow-xl w-full text-center transition-all duration-300 flex flex-col" x-cloak>
+      <div class="mb-6">
+        <h1 id="card-heading" class="text-2xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white" x-text="lang === 'en' ? '🇸🇦 Credit Card Generator' : 'مولد بطاقات الائتمان 🇸🇦'"></h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="lang === 'en' ? 'Generate random Saudi credit card' : 'توليد بطاقة ائتمان سعودية عشوائية'"></p>
+      </div>
+
+      <div class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300 overflow-hidden" :class="['transition-all','duration-500','rounded-lg']" :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'" data-card-highlight>
+        <div>
+          <div class="flex justify-between items-start mb-1 gap-2">
+            <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
+            <button @click="copyCard()" :disabled="!generatedCard" type="button" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 flex-shrink-0" :aria-label="lang === 'en' ? 'Copy card number' : 'نسخ رقم البطاقة'" :title="lang === 'en' ? 'Copy card number' : 'نسخ رقم البطاقة'">
+              <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+          <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="animatedCardNumber ? formatCardNumber(animatedCardNumber) : (generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####')"></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد')"></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'CVV: ' + generatedCard.cvv : 'رمز: ' + generatedCard.cvv) : (lang === 'en' ? 'CVV: ***' : 'رمز: ***')"></p>
+        </div>
+      </div>
+
+      <button @click="generateCard()" type="button" class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-green-300/40 dark:focus:ring-green-500/30" :disabled="generating" :class="{ 'opacity-75 cursor-wait': generating }">
+        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <span x-text="generating ? (lang === 'en' ? 'Generating...' : 'جاري التوليد...') : (lang === 'en' ? 'Generate Card' : 'توليد بطاقة')"></span>
+      </button>
+    </section>
+
+    <section x-show="activeTab==='card'" aria-labelledby="card-history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
+      <div class="flex justify-between items-center mb-3">
+        <h2 id="card-history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
+        <button @click="clearCardHistory()" type="button" :class="cardHistory.length ? 'text-red-500 hover:text-red-700 dark:hover:text-red-400 cursor-pointer' : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'" class="text-xs font-medium transition flex items-center gap-1 disabled:opacity-70 focus:outline-none focus:ring-1 focus:ring-red-500 rounded" :disabled="!cardHistory.length" :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'" :title="lang === 'en' ? 'Clear History' : 'مسح السجل'">
+          <svg class="w-[14px] h-[14px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
+          <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
+        </button>
+      </div>
+      <div class="min-h-[180px]">
+        <template x-if="cardHistory.length">
+          <ul class="space-y-1.5" aria-labelledby="card-history-heading">
+            <template x-for="(num, index) in cardHistory" :key="num + index">
+              <li class="card-history-item p-2 rounded-md transition duration-200 ease-in-out flex items-center justify-between gap-x-3" :class="{ 'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0, 'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0, 'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0, 'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4, 'opacity-60': index === 5, 'opacity-50': index === 6 }" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+                <span class="font-mono text-gray-800 dark:text-gray-200 truncate force-ltr flex-grow" x-text="formatCardNumber(num)" :title="num"></span>
+                <button @click="copyCardFromHistory(num)" type="button" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition transform active:scale-95 flex-shrink-0 ml-1 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded" :aria-label="(lang === 'en' ? 'Copy card: ' : 'نسخ البطاقة: ') + num" :title="lang === 'en' ? 'Copy' : 'نسخ'">
+                  <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </template>
+        <template x-if="!cardHistory.length">
+          <p class="text-sm text-center text-gray-500 dark:text-gray-400 pt-10" x-text="lang === 'en' ? 'No recent cards.' : 'لا توجد بطاقات حديثة.'"></p>
+        </template>
+      </div>
+    </section>
+
+    <section x-show="activeTab==='iban'" aria-labelledby="history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
        <div class="flex justify-between items-center mb-3">
          <h2 id="history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
           <button
@@ -349,11 +413,15 @@
         darkMode: false,
         manualToggle: false,
         generating: false,
+        activeTab: 'iban',
         generatedIban: null,
+        generatedCard: null,
         selectedBankCode: '',
         ibanHistory: [],
+        cardHistory: [],
         animatedIban: [],
         animatedBankName: '',
+        animatedCardNumber: '',
         showToast: false,
         toastMessage: '',
         toastType: 'info',
@@ -364,6 +432,13 @@
         ANIM_SLOT_INTERVAL: 40,
         ANIM_IBAN_CHAR_INTERVAL: 40,
         ANIM_IBAN_SLOT_INTERVAL: 50,
+
+        firstNamesEn: ['Abdullah','Khaled','Faisal','Mohammed','Saad','Nasser','Salman','Fahad'],
+        middleNamesEn: ['Ahmad','Ali','Omar','Saleh','Hassan','Abdulaziz','Mansour','Hamad'],
+        lastNamesEn: ['Alazmi','Alamri','Alotaibi','Alqahtani','Alharbi','Alshehri','Aldossari','Almutairi'],
+        firstNamesAr: ['عبدالله','خالد','فيصل','محمد','سعد','ناصر','سلمان','فهد'],
+        middleNamesAr: ['أحمد','علي','عمر','صالح','حسن','عبدالعزيز','منصور','حمد'],
+        lastNamesAr: ['العازمي','العمري','العتيبي','القحطاني','الحربي','الشهري','الدوسري','المطيري'],
 
         bankOptions: {
           '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', logo: 'logos/alinma.png' },
@@ -396,6 +471,9 @@
                     this.animatedBankName = this.generatedIban.bank;
                 }
             }
+            if (this.generatedCard) {
+                this.generatedCard.name = this.generateRandomName(newLang);
+            }
           });
         },
 
@@ -405,6 +483,24 @@
 
         getBankInfoByName(englishName) {
             return Object.values(this.bankOptions).find(b => b.name === englishName) || null;
+        },
+
+        rand(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        },
+
+        generateRandomName(lang = this.lang) {
+            if (lang === 'en') {
+                const f = this.rand(this.firstNamesEn);
+                const m = this.rand(this.middleNamesEn);
+                const l = this.rand(this.lastNamesEn);
+                return `${f} ${m[0].toUpperCase()}. ${l}`;
+            } else {
+                const f = this.rand(this.firstNamesAr);
+                const m = this.rand(this.middleNamesAr);
+                const l = this.rand(this.lastNamesAr);
+                return `${f} ${m[0]}. ${l}`;
+            }
         },
 
         fetchVersion() {
@@ -440,10 +536,22 @@
                   localStorage.removeItem('ibanHistory');
               }
             }
+
+            const storedCards = JSON.parse(localStorage.getItem('cardHistory') || '[]');
+            if (Array.isArray(storedCards) && storedCards.every(c => typeof c === 'string')) {
+              this.cardHistory = storedCards.slice(0, this.HISTORY_LIMIT);
+            } else {
+              this.cardHistory = [];
+              if (localStorage.getItem('cardHistory')) {
+                  localStorage.removeItem('cardHistory');
+              }
+            }
           } catch (e) {
             console.error("Error loading history:", e);
             this.ibanHistory = [];
             localStorage.removeItem('ibanHistory');
+            this.cardHistory = [];
+            localStorage.removeItem('cardHistory');
           }
         },
 
@@ -518,6 +626,66 @@
           }
         },
 
+        luhnDigit(baseDigits) {
+          const digits = baseDigits.split('').map(d => parseInt(d, 10)).reverse();
+          let sum = 0;
+          for (let i = 0; i < digits.length; i++) {
+            let n = digits[i];
+            if (i % 2 === 0) {
+              n *= 2;
+              if (n > 9) n -= 9;
+            }
+            sum += n;
+          }
+          return (10 - (sum % 10)) % 10;
+        },
+
+        generateCard() {
+          if (this.generating) return;
+          this.generating = true;
+          setTimeout(() => {
+            try {
+              let base = '4';
+              for (let i = 1; i < 15; i++) base += Math.floor(Math.random() * 10);
+              const check = this.luhnDigit(base);
+              const number = base + check;
+
+              const now = new Date();
+              const startMonth = now.getFullYear() * 12 + now.getMonth();
+              const endMonth = startMonth + 60;
+              const randMonth = Math.floor(Math.random() * (endMonth - startMonth + 1)) + startMonth;
+              const year = Math.floor(randMonth / 12);
+              const month = randMonth % 12;
+              const expiry = String(month + 1).padStart(2, '0') + '/' + String(year % 100).padStart(2, '0');
+
+              const cvv = Math.floor(100 + Math.random() * 900);
+              const name = this.generateRandomName();
+
+              this.generatedCard = { number, name, expiry, cvv };
+
+              this.$nextTick(() => {
+                const box = document.querySelector('[data-card-highlight]');
+                if (box) {
+                  box.classList.remove('pulse-highlight');
+                  void box.offsetWidth;
+                  box.classList.add('pulse-highlight');
+                }
+                this.animateText('animatedCardNumber', number, this.ANIM_CHAR_INTERVAL, this.ANIM_SLOT_INTERVAL);
+              });
+
+              if (!this.cardHistory.includes(number)) {
+                this.cardHistory.unshift(number);
+                this.cardHistory = this.cardHistory.slice(0, this.HISTORY_LIMIT);
+                localStorage.setItem('cardHistory', JSON.stringify(this.cardHistory));
+              }
+
+              this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
+            } finally {
+              setTimeout(() => { this.generating = false; }, 400);
+            }
+          }, 50);
+        },
+
         copyIban() {
           const ibanToCopy = this.generatedIban?.iban;
           if (!ibanToCopy) {
@@ -530,6 +698,20 @@
         copyIbanFromHistory(iban) {
             if (!iban) return;
             this.copyToClipboard(iban, this.lang === 'en' ? 'IBAN copied from history!' : '!تم نسخ الآيبان من السجل');
+        },
+
+        copyCard() {
+          const cardToCopy = this.generatedCard?.number;
+          if (!cardToCopy) {
+            this.showToastMessage(this.lang === 'en' ? 'Generate a card first.' : 'قم بتوليد بطاقة أولاً.', 'info');
+            return;
+          }
+          this.copyToClipboard(cardToCopy, this.lang === 'en' ? 'Card number copied!' : '!تم نسخ رقم البطاقة');
+        },
+
+        copyCardFromHistory(number) {
+            if (!number) return;
+            this.copyToClipboard(number, this.lang === 'en' ? 'Card number copied!' : '!تم نسخ رقم البطاقة');
         },
 
         copyToClipboard(text, successMessage) {
@@ -593,6 +775,26 @@
           }, listItems.length * 30 + 350);
         },
 
+        clearCardHistory() {
+          if (this.cardHistory.length === 0) {
+            this.showToastMessage(this.lang === 'en' ? 'History is already empty' : 'السجل فارغ بالفعل', 'info');
+            return;
+          }
+          const items = document.querySelectorAll('.card-history-item');
+          items.forEach((el, i) => {
+            el.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
+            requestAnimationFrame(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
+            });
+          });
+          setTimeout(() => {
+            this.cardHistory = [];
+            localStorage.removeItem('cardHistory');
+            this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
+          }, items.length * 30 + 350);
+        },
+
         showToastMessage(msg, type = 'info') {
           if (this.toastTimeout) clearTimeout(this.toastTimeout);
           this.toastMessage = msg;
@@ -606,6 +808,11 @@
         formatIban(iban) {
             if (!iban || typeof iban !== 'string' || iban.length !== 24) return iban;
             return iban.replace(/(SA\d{2})(\d{4})(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4 $5 $6');
+        },
+
+        formatCardNumber(num) {
+            if (!num || typeof num !== 'string' || num.length !== 16) return num;
+            return num.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
         },
 
         animateText(propName, targetText, charIntervalSpeed, slotIntervalSpeed) {
