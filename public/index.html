@@ -290,6 +290,57 @@
       </button>
     </section>
 
+    <section x-show="activeTab==='card'" aria-labelledby="card-history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
+      <div class="flex justify-between items-center mb-3">
+        <h2 id="card-history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
+        <button
+          @click="clearCardHistory()"
+          type="button"
+          :class="cardHistory.length ? 'text-red-500 hover:text-red-700 dark:hover:text-red-400 cursor-pointer' : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'"
+          class="text-xs font-medium transition flex items-center gap-1 disabled:opacity-70 focus:outline-none focus:ring-1 focus:ring-red-500 rounded"
+          :disabled="!cardHistory.length"
+          :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'"
+          :title="lang === 'en' ? 'Clear History' : 'مسح السجل'">
+            <svg class="w-[14px] h-[14px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
+            <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
+        </button>
+      </div>
+      <div class="min-h-[180px]">
+        <template x-if="cardHistory.length">
+          <ul class="space-y-1.5" aria-labelledby="card-history-heading">
+            <template x-for="(num, index) in cardHistory" :key="num + index">
+              <li
+                class="history-list-item card-history-item p-2 rounded-md transition duration-200 ease-in-out flex items-center justify-between gap-x-3"
+                :class="{
+                  'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
+                  'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
+                  'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0,
+                  'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4,
+                  'opacity-60': index === 5, 'opacity-50': index === 6,
+                }"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+              >
+                <span class="font-mono text-gray-800 dark:text-gray-200 truncate force-ltr flex-grow" x-text="formatCardNumber(num)" :title="num"></span>
+                <button
+                  @click="copyCardFromHistory(num)"
+                  type="button"
+                  class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition transform active:scale-95 flex-shrink-0 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
+                  :aria-label="(lang === 'en' ? 'Copy card: ' : 'نسخ البطاقة: ') + num"
+                  :title="lang === 'en' ? 'Copy' : 'نسخ'">
+                  <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </li>
+            </template>
+          </ul>
+        </template>
+        <template x-if="!cardHistory.length">
+          <p class="text-sm text-center text-gray-500 dark:text-gray-400 pt-10" x-text="lang === 'en' ? 'No recent cards.' : 'لا توجد بطاقات حديثة.'"></p>
+        </template>
+      </div>
+    </section>
+
     <section x-show="activeTab==='iban'" aria-labelledby="history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
        <div class="flex justify-between items-center mb-3">
          <h2 id="history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
@@ -386,6 +437,7 @@
         generatedCard: null,
         selectedBankCode: '',
         ibanHistory: [],
+        cardHistory: [],
         animatedIban: [],
         animatedBankName: '',
         showToast: false,
@@ -420,6 +472,7 @@
           this.darkMode = document.documentElement.classList.contains('dark');
           this.lang = localStorage.getItem('lang') || 'en';
           this.loadHistory();
+          this.loadCardHistory();
           this.fetchVersion();
 
           this.$watch('lang', (newLang) => {
@@ -481,6 +534,27 @@
             console.error("Error loading history:", e);
             this.ibanHistory = [];
             localStorage.removeItem('ibanHistory');
+          }
+        },
+
+        loadCardHistory() {
+          try {
+            const stored = JSON.parse(localStorage.getItem('cardHistory') || '[]');
+            if (Array.isArray(stored)) {
+              this.cardHistory = stored
+                .map(it => typeof it === 'string' ? it : (it && it.number))
+                .filter(Boolean)
+                .slice(0, this.HISTORY_LIMIT);
+            } else {
+              this.cardHistory = [];
+              if (localStorage.getItem('cardHistory')) {
+                localStorage.removeItem('cardHistory');
+              }
+            }
+          } catch (e) {
+            console.error("Error loading card history:", e);
+            this.cardHistory = [];
+            localStorage.removeItem('cardHistory');
           }
         },
 
@@ -571,12 +645,16 @@
               const month = randMonth % 12;
               const expiry = String(month + 1).padStart(2, '0') + '/' + String(year % 100).padStart(2, '0');
 
-              const cvv = Math.floor(100 + Math.random() * 900);
-              const name = this.lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
+          const cvv = Math.floor(100 + Math.random() * 900);
+          const name = this.lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
 
-              this.generatedCard = { number, name, expiry, cvv };
-              this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
-            } finally {
+          this.generatedCard = { number, name, expiry, cvv };
+          this.cardHistory = this.cardHistory.filter(n => n !== number);
+          this.cardHistory.unshift(number);
+          this.cardHistory = this.cardHistory.slice(0, this.HISTORY_LIMIT);
+          localStorage.setItem('cardHistory', JSON.stringify(this.cardHistory));
+          this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
+        } finally {
               setTimeout(() => { this.generating = false; }, 400);
             }
           }, 50);
@@ -594,6 +672,11 @@
         copyIbanFromHistory(iban) {
             if (!iban) return;
             this.copyToClipboard(iban, this.lang === 'en' ? 'IBAN copied from history!' : '!تم نسخ الآيبان من السجل');
+        },
+
+        copyCardFromHistory(num) {
+            if (!num) return;
+            this.copyToClipboard(num, this.lang === 'en' ? 'Card number copied from history!' : '!تم نسخ البطاقة من السجل');
         },
 
         copyToClipboard(text, successMessage) {
@@ -654,6 +737,28 @@
             localStorage.removeItem('ibanHistory');
             this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
             this.$refs.generateButton?.focus();
+          }, listItems.length * 30 + 350);
+        },
+
+        clearCardHistory() {
+          if (this.cardHistory.length === 0) {
+            this.showToastMessage(this.lang === 'en' ? 'History is already empty' : 'السجل فارغ بالفعل', 'info');
+            return;
+          }
+
+          const listItems = document.querySelectorAll('.card-history-item');
+          listItems.forEach((el, i) => {
+            el.style.transition = `opacity 0.3s ease ${i * 0.03}s, transform 0.3s ease ${i * 0.03}s`;
+            requestAnimationFrame(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
+            });
+          });
+
+          setTimeout(() => {
+            this.cardHistory = [];
+            localStorage.removeItem('cardHistory');
+            this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
           }, listItems.length * 30 + 350);
         },
 
