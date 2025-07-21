@@ -278,7 +278,7 @@
         <div>
           <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
           <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد')"></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'FULL NAME' : 'الاسم الكامل')"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'CVV: ' + generatedCard.cvv : 'رمز: ' + generatedCard.cvv) : (lang === 'en' ? 'CVV: ***' : 'رمز: ***')"></p>
         </div>
@@ -399,6 +399,17 @@
         ANIM_IBAN_CHAR_INTERVAL: 40,
         ANIM_IBAN_SLOT_INTERVAL: 50,
 
+        firstNames: ['ABDULLAH', 'MOHAMMED', 'FAHAD', 'SULTAN', 'TURKI'],
+        middleNames: ['AHMED', 'IBN', 'ABDUL', 'BIN', 'AL'],
+        lastNames: ['ALSAUD', 'ALOTAIBI', 'ALHARBI', 'ALQAHTANI', 'ALFARHAN'],
+
+        generateRandomName() {
+          const f = this.firstNames[Math.floor(Math.random() * this.firstNames.length)];
+          const m = this.middleNames[Math.floor(Math.random() * this.middleNames.length)];
+          const l = this.lastNames[Math.floor(Math.random() * this.lastNames.length)];
+          return `${f} ${m} ${l}`;
+        },
+
         bankOptions: {
           '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', logo: 'logos/alinma.png' },
           '10': { name: 'SNB', ar: 'البنك الأهلي السعودي', logo: 'logos/snb.png' },
@@ -429,9 +440,6 @@
                     this.generatedIban.bank = newLang === 'en' ? bankInfo.name : bankInfo.ar;
                     this.animatedBankName = this.generatedIban.bank;
                 }
-            }
-            if (this.generatedCard) {
-                this.generatedCard.name = newLang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
             }
           });
         },
@@ -572,7 +580,7 @@
               const expiry = String(month + 1).padStart(2, '0') + '/' + String(year % 100).padStart(2, '0');
 
               const cvv = Math.floor(100 + Math.random() * 900);
-              const name = this.lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
+              const name = this.generateRandomName();
 
               this.generatedCard = { number, name, expiry, cvv };
               this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
