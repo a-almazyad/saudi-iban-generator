@@ -2,7 +2,7 @@
   "name": "saudi-iban-generator",
   "version": "1.2.0",
   "description": "Saudi IBAN Generator 🇸🇦 : Generate valid Saudi IBANs instantly with bank identification. clipboard copy, and recent history support.",
-  "main": "index.js",
+  "main": "src/iban.js",
   "devDependencies": {
     "tailwindcss": "^4.1.5",
     "tailwindcss-cli": "^0.1.2",
