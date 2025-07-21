@@ -1,6 +1,6 @@
 {
   "name": "saudi-iban-generator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Saudi IBAN Generator 🇸🇦 : Generate valid Saudi IBANs instantly with bank identification. clipboard copy, and recent history support.",
   "main": "index.js",
   "devDependencies": {
@@ -9,7 +9,8 @@
     "jest": "^29.7.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "node scripts/bundleCreditCard.js"
   },
   "repository": {
     "type": "git",
