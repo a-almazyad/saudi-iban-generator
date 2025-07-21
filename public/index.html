@@ -48,6 +48,7 @@
     };
   </script>
   <script src="https://unpkg.com/alpinejs@3.13.10/dist/cdn.min.js" defer></script>
+  <script src="creditCard.js"></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🇸🇦</text></svg>">
   <style>
     @keyframes spinHalf { 0% { transform: rotate(0deg); } 100% { transform: rotate(180deg); } }
@@ -554,29 +555,13 @@
           }
         },
 
-        luhnDigit(baseDigits) {
-          const digits = baseDigits.split('').map(d => parseInt(d, 10)).reverse();
-          let sum = 0;
-          for (let i = 0; i < digits.length; i++) {
-            let n = digits[i];
-            if (i % 2 === 0) {
-              n *= 2;
-              if (n > 9) n -= 9;
-            }
-            sum += n;
-          }
-          return (10 - (sum % 10)) % 10;
-        },
 
-        generateCard() {
-          if (this.generating) return;
-          this.generating = true;
-          setTimeout(() => {
-            try {
-              let base = '4';
-              for (let i = 1; i < 15; i++) base += Math.floor(Math.random() * 10);
-              const check = this.luhnDigit(base);
-              const number = base + check;
+          generateCard() {
+            if (this.generating) return;
+            this.generating = true;
+            setTimeout(() => {
+              try {
+                const number = window.CreditCard.generateVisaNumber();
 
               const now = new Date();
               const startMonth = now.getFullYear() * 12 + now.getMonth();
