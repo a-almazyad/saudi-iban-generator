@@ -276,7 +276,18 @@
 
       <div class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300 overflow-hidden" :class="['transition-all','duration-500','rounded-lg']" :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'">
         <div>
-          <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
+          <div class="flex justify-between items-start mb-1 gap-2">
+            <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
+            <button
+              @click="copyCard()"
+              :disabled="!generatedCard"
+              type="button"
+              class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 flex-shrink-0"
+              :aria-label="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'"
+              :title="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'">
+              <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
           <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'FULL NAME' : 'الاسم الكامل')"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
@@ -602,6 +613,20 @@
         copyIbanFromHistory(iban) {
             if (!iban) return;
             this.copyToClipboard(iban, this.lang === 'en' ? 'IBAN copied from history!' : '!تم نسخ الآيبان من السجل');
+        },
+
+        copyCard() {
+          const cardNum = this.generatedCard?.number;
+          if (!cardNum) {
+            this.showToastMessage(this.lang === 'en' ? 'Generate a card first.' : 'قم بتوليد بطاقة أولاً.', 'info');
+            return;
+          }
+          this.copyToClipboard(cardNum, this.lang === 'en' ? 'Card copied!' : '!تم نسخ البطاقة');
+        },
+
+        copyCardFromHistory(num) {
+            if (!num) return;
+            this.copyToClipboard(num, this.lang === 'en' ? 'Card copied from history!' : '!تم نسخ البطاقة من السجل');
         },
 
         copyToClipboard(text, successMessage) {
