@@ -277,8 +277,8 @@
       <div class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300 overflow-hidden" :class="['transition-all','duration-500','rounded-lg']" :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'">
         <div>
           <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
-          <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد')"></p>
+          <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="animatedCardNumber.length ? formatCardNumber(animatedCardNumber.join('')) : (generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####')"></p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="animatedCardName || (generatedCard ? generatedCard.name : (lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد'))"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
           <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'CVV: ' + generatedCard.cvv : 'رمز: ' + generatedCard.cvv) : (lang === 'en' ? 'CVV: ***' : 'رمز: ***')"></p>
         </div>
@@ -388,6 +388,8 @@
         ibanHistory: [],
         animatedIban: [],
         animatedBankName: '',
+        animatedCardNumber: [],
+        animatedCardName: '',
         showToast: false,
         toastMessage: '',
         toastType: 'info',
@@ -432,6 +434,7 @@
             }
             if (this.generatedCard) {
                 this.generatedCard.name = newLang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
+                this.animatedCardName = this.generatedCard.name;
             }
           });
         },
@@ -575,6 +578,8 @@
               const name = this.lang === 'en' ? 'ABDULLAH ALMAZYAD' : 'عبدالله المزياد';
 
               this.generatedCard = { number, name, expiry, cvv };
+              this.animateDigits('animatedCardNumber', number, this.ANIM_IBAN_CHAR_INTERVAL, this.ANIM_IBAN_SLOT_INTERVAL);
+              this.animateText('animatedCardName', name, this.ANIM_CHAR_INTERVAL, this.ANIM_SLOT_INTERVAL);
               this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
             } finally {
               setTimeout(() => { this.generating = false; }, 400);
@@ -721,6 +726,43 @@
             }
             let currentChars = [...this[propName]];
             let charIndex = 2;
+            let intervalId;
+
+            intervalId = setInterval(() => {
+                if (charIndex >= targetChars.length) {
+                    clearInterval(intervalId);
+                    window[`${propName}Interval`] = null;
+                    this[propName] = [...targetChars];
+                    return;
+                }
+                const currentSlot = charIndex;
+                let cycleCount = 0;
+                const maxCycles = 4;
+                let charIntervalId = setInterval(() => {
+                    if (cycleCount >= maxCycles) {
+                        clearInterval(charIntervalId);
+                        currentChars[currentSlot] = targetChars[currentSlot];
+                        this[propName] = [...currentChars];
+                    } else {
+                        currentChars[currentSlot] = Math.floor(Math.random() * 10).toString();
+                        this[propName] = [...currentChars];
+                        cycleCount++;
+                    }
+                }, charIntervalSpeed);
+                charIndex++;
+            }, slotIntervalSpeed);
+            window[`${propName}Interval`] = intervalId;
+        },
+
+        animateDigits(propName, targetDigits, charIntervalSpeed, slotIntervalSpeed) {
+            if (window[`${propName}Interval`]) clearInterval(window[`${propName}Interval`]);
+
+            const targetChars = targetDigits.split('');
+            if (!Array.isArray(this[propName]) || this[propName].length !== targetChars.length) {
+                this[propName] = Array(targetChars.length).fill('#');
+            }
+            let currentChars = [...this[propName]];
+            let charIndex = 0;
             let intervalId;
 
             intervalId = setInterval(() => {
