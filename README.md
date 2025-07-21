@@ -89,6 +89,14 @@ Or just open `public/index.html` directly.
 
 ---
 
+## 🧪 Testing & Bundling
+
+Run `npm test` to execute the Jest suite. Helper modules in `src/` are CommonJS files used primarily for these tests.
+
+To make the credit card generator available in the browser, run `npm run build`. This bundles `src/creditCard.js` to `public/creditCard.js` and exposes a global `CreditCard` object.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! If you have suggestions, improvements, or bug fixes, please fork the repo and open a pull request.
