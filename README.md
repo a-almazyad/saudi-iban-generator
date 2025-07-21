@@ -1,6 +1,6 @@
 # 🇸🇦 Saudi IBAN Generator
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
 
 🔗 [Live Demo](https://saudi-iban-generator.onrender.com/)
 
@@ -14,10 +14,20 @@
 - 🌙 Fully supports **dark/light mode** with OS theme detection
 - 🌐 Supports **English & Arabic** with RTL switching
 - 🎨 Animated UI using **Tailwind CSS** + **Alpine.js**
+- 💳 Generate valid **Saudi credit card numbers**
+- 🗂️ Tabbed interface for IBAN and card generators
+- 🕓 Store and display history of generated cards
 
 ## 🖼️ Preview
 
 ![screenshot](public/IBAN.png)
+
+## 🎈 Usage
+
+1. Use the tabs at the top to switch to **Credit Card Generator**.
+2. Click **Generate Card** to create a random Saudi Visa number.
+3. Press **Copy** to copy the card number to your clipboard.
+4. Generated cards are saved in your card history.
 
 ---
 
@@ -86,6 +96,14 @@ python3 -m http.server 8080
 
 Or just open `public/index.html` directly.
 
+
+---
+
+## 🧪 Testing & Bundling
+
+Run `npm test` to execute the Jest suite. Helper modules in `src/` are CommonJS files used primarily for these tests.
+
+To make the credit card generator available in the browser, run `npm run build`. This bundles `src/creditCard.js` to `public/creditCard.js` and exposes a global `CreditCard` object.
 
 ---
 
