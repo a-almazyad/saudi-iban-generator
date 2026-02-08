@@ -1,6 +1,6 @@
 # 🇸🇦 Saudi IBAN Generator
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.3.0-blue)
 
 🔗 [Live Demo](https://saudi-iban-generator.onrender.com/)
 
