@@ -971,7 +971,6 @@
           setTimeout(() => {
             this.ibanHistory = [];
             localStorage.removeItem('ibanHistory');
-            this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
             this.$refs.generateButton?.focus();
           }, listItems.length * 30 + 350);
         },
@@ -994,7 +993,6 @@
           setTimeout(() => {
             this.cardHistory = [];
             localStorage.removeItem('cardHistory');
-            this.showToastMessage(this.lang === 'en' ? 'History cleared' : 'تم مسح السجل', 'success');
           }, listItems.length * 30 + 350);
         },
 
