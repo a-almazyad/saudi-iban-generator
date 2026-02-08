@@ -327,7 +327,11 @@
                 >
                   <span class="flex items-center gap-2 overflow-hidden">
                     <template x-if="computedBank()">
-                      <span class="bank-mark h-5 w-5 text-[11px]" x-text="computedBank().mark"></span>
+                      <img
+                        class="h-5 w-5 rounded-full bg-white object-contain p-0.5"
+                        :src="computedBank().logo"
+                        :alt="lang === 'en' ? computedBank().name + ' logo' : 'شعار ' + computedBank().ar"
+                      />
                     </template>
                     <template x-if="!selectedBankCode">
                       <span class="text-lg" aria-hidden="true">🎲</span>
@@ -373,10 +377,15 @@
                       tabindex="0"
                       @keydown.enter.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
                       @keydown.space.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
-                      class="flex items-center rounded-sm px-3 py-2 text-sm transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus:bg-[hsl(var(--accent))] focus:text-[hsl(var(--accent-foreground))]"
-                      :class="selectedBankCode === code ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : ''"
-                    >
-                      <span class="bank-mark h-4 w-4 text-[10px]" :class="lang === 'ar' ? 'ml-3' : 'mr-3'" x-text="bank.mark"></span>
+                    class="flex items-center rounded-sm px-3 py-2 text-sm transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus:bg-[hsl(var(--accent))] focus:text-[hsl(var(--accent-foreground))]"
+                    :class="selectedBankCode === code ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : ''"
+                  >
+                      <img
+                        class="h-4 w-4 rounded-full bg-white object-contain p-0.5"
+                        :class="lang === 'ar' ? 'ml-3' : 'mr-3'"
+                        :src="bank.logo"
+                        :alt="lang === 'en' ? bank.name + ' logo' : 'شعار ' + bank.ar"
+                      />
                       <span x-text="lang === 'en' ? bank.name : bank.ar"></span>
                     </div>
                   </template>
