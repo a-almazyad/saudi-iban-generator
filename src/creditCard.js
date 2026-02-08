@@ -31,31 +31,7 @@ function generateVisaNumber() {
   return digits.join('');
 }
 
-function generateCard(storage) {
-  const number = generateVisaNumber();
-
-  const now = new Date();
-  const startMonth = now.getFullYear() * 12 + now.getMonth();
-  const endMonth = startMonth + 60;
-  const randMonth = Math.floor(Math.random() * (endMonth - startMonth + 1)) + startMonth;
-  const year = Math.floor(randMonth / 12);
-  const month = randMonth % 12;
-  const expiry = String(month + 1).padStart(2, '0') + '/' + String(year % 100).padStart(2, '0');
-
-  const cvv = Math.floor(100 + Math.random() * 900);
-  const card = { number, expiry, cvv };
-
-  if (storage && typeof storage.getItem === 'function' && typeof storage.setItem === 'function') {
-    const history = JSON.parse(storage.getItem('cardHistory') || '[]');
-    history.unshift({ number, expiry, cvv });
-    storage.setItem('cardHistory', JSON.stringify(history.slice(0, 10)));
-  }
-
-  return card;
-}
-
 module.exports = {
   luhnCheck,
   generateVisaNumber,
-  generateCard,
 };
