@@ -4,19 +4,20 @@
 
 🔗 [Live Demo](https://saudi-iban-generator.onrender.com/)
 
+Generate compliant Saudi IBANs and sample Saudi Visa card details in a fast, static web app. The UI includes bank selection with logos, copy-to-clipboard actions, bilingual support (EN/AR), and a clean dark/light theme.
+
 ## ✨ Features
 
-- 🔢 Generate valid **Saudi IBANs**
-- 🏦 Choose or randomize banks (with logos)
+- 🔢 Generate valid-format **Saudi IBANs** with correct check digits
+- 🏦 Select a bank or randomize the bank code (with logos)
 - 🧠 Auto-detect and display **bank name**
-- 📋 One-click **copy to clipboard** with feedback
-- 🕓 Store and display **recent IBANs** (localStorage)
-- 🌙 Fully supports **dark/light mode** with OS theme detection
-- 🌐 Supports **English & Arabic** with RTL switching
-- 🎨 Animated UI using **Tailwind CSS** + **Alpine.js**
-- 💳 Generate valid **Saudi credit card numbers**
+- 📋 One-click **copy to clipboard** with toast feedback
+- 🕓 Store and display **recent IBANs** and **recent cards** (localStorage)
+- 🌙 **Dark/light mode** with OS preference and manual toggle
+- 🌐 **English & Arabic** with RTL switching
+- 🎨 Animated UI using **Tailwind CSS (CDN)** + **Alpine.js (CDN)**
+- 💳 Generate valid **Saudi Visa card numbers** (Luhn check)
 - 🗂️ Tabbed interface for IBAN and card generators
-- 🕓 Store and display history of generated cards
 
 ## 🖼️ Preview
 
@@ -24,8 +25,15 @@
 
 ## 🎈 Usage
 
-1. Use the tabs at the top to switch to **Credit Card Generator**.
-2. Click **Generate Card** to create a random Saudi Visa number.
+### IBAN Generator
+1. Select a bank (or keep random selection).
+2. Click **Generate IBAN** to create a new Saudi IBAN.
+3. Press **Copy** to copy the IBAN to your clipboard.
+4. Generated IBANs are saved in your history.
+
+### Credit Card Generator
+1. Switch to the **Credit Card** tab.
+2. Click **Generate Card** to create a Saudi Visa number with expiry and CVV.
 3. Press **Copy** to copy the card number to your clipboard.
 4. Generated cards are saved in your card history.
 
@@ -33,26 +41,69 @@
 
 ## 🛠️ How It Works
 
-- The app generates a valid Saudi IBAN by constructing a BBAN (Basic Bank Account Number) based on the selected or random bank code and a randomly generated account number.
-- The IBAN check digits are calculated using the standard modulo 97 method.
-- The selected bank's logo and name are displayed and stored alongside the IBAN in the local history (stored in localStorage).
-- The app uses Alpine.js for interactivity and Tailwind CSS for styling and transitions.
+- **IBAN generation**
+  - Builds a BBAN from the selected bank code + random account number.
+  - Calculates check digits using the **modulo 97** algorithm.
+  - Formats the final IBAN as `SA + check digits + BBAN`.
+- **Card generation**
+  - Produces a Visa card number that satisfies the **Luhn** checksum.
+  - Generates a realistic expiry date and a 3-digit CVV.
+- **State & persistence**
+  - UI state and history are stored in **localStorage** for quick retrieval.
 
 ---
 
-## 🌍 Localization
+## 🌍 Localization & Accessibility
 
-- The app supports both English and Arabic.
-- It automatically adjusts the layout for right-to-left (RTL) display when Arabic is selected.
-- Language preference is stored in localStorage for persistence across sessions.
+- English and Arabic UI with RTL switching.
+- Language preference is persisted in localStorage.
+- Interactive controls include keyboard handlers and accessible labels.
 
 ---
-
 
 ## 🧰 Tech Stack
 
 - **Frontend**: HTML, Tailwind CSS (CDN), Alpine.js (CDN)
-- **No Backend Required**: Pure static app
+- **Bundling**: Node.js script to expose the credit card helper in the browser
+- **Testing**: Jest (for helper modules in `src/`)
+- **Deployment**: Static hosting (no backend required)
+
+---
+
+## 📁 Project Structure
+
+```text
+public/          # Static site assets (index.html, logos, built creditCard.js)
+src/             # Helper modules (IBAN + card generators)
+scripts/         # Build script to bundle creditCard helper for the browser
+tests/           # Jest tests for generator logic
+```
+
+---
+
+## ▶️ Running Locally
+
+```bash
+cd public
+python3 -m http.server 8080
+# Then open http://localhost:8080 in your browser
+```
+
+Or open `public/index.html` directly.
+
+---
+
+## 🧪 Testing & Bundling
+
+Run `npm test` to execute the Jest suite. Helper modules in `src/` are CommonJS files used primarily for these tests.
+
+To make the credit card generator available in the browser, run:
+
+```bash
+npm run build
+```
+
+This bundles `src/creditCard.js` to `public/creditCard.js` and exposes a global `CreditCard` object used by the UI.
 
 ---
 
@@ -83,27 +134,6 @@ This is a static app. You can deploy it with:
 #### 🔹 Vercel
 - Output directory: `public`
 - Preset: Other
-
----
-
-## ▶️ Running Locally
-
-```bash
-cd public
-python3 -m http.server 8080
-# Then open http://localhost:8080 in your browser
-```
-
-Or just open `public/index.html` directly.
-
-
----
-
-## 🧪 Testing & Bundling
-
-Run `npm test` to execute the Jest suite. Helper modules in `src/` are CommonJS files used primarily for these tests.
-
-To make the credit card generator available in the browser, run `npm run build`. This bundles `src/creditCard.js` to `public/creditCard.js` and exposes a global `CreditCard` object.
 
 ---
 
