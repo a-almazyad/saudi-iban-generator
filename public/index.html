@@ -455,10 +455,11 @@
                         </div>
                         <div class="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
                           <template x-if="getBankInfoByName(item.bank)">
-                            <span
-                              class="bank-mark h-4 w-4 text-[10px]"
-                              x-text="getBankInfoByName(item.bank)?.mark"
-                            ></span>
+                            <img
+                              class="h-4 w-4 rounded-full bg-white object-contain p-0.5"
+                              :src="getBankInfoByName(item.bank)?.logo"
+                              :alt="lang === 'en' ? getBankInfoByName(item.bank)?.name + ' logo' : 'شعار ' + getBankInfoByName(item.bank)?.ar"
+                            />
                           </template>
                           <span class="truncate" x-text="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)" :title="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)"></span>
                         </div>
