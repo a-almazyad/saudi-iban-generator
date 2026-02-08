@@ -838,7 +838,6 @@
               const name = this.generateRandomName();
 
               this.generatedCard = { number, name, expiry, cvv };
-              this.showToastMessage(this.lang === 'en' ? 'Card Generated!' : 'تم توليد البطاقة!', 'success');
 
               if (!this.cardHistory.some(item => item.number === number)) {
                 this.cardHistory.unshift({ number, name, expiry, cvv });
