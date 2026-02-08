@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Saudi Arabia flag">
+  <rect width="512" height="512" fill="#006C35"/>
+  <text x="256" y="220" text-anchor="middle" font-size="64" font-family="Arial, Helvetica, sans-serif" fill="#FFFFFF" font-weight="700">SAUDI</text>
+  <text x="256" y="290" text-anchor="middle" font-size="64" font-family="Arial, Helvetica, sans-serif" fill="#FFFFFF" font-weight="700">ARABIA</text>
+  <rect x="120" y="340" width="272" height="18" rx="9" fill="#FFFFFF"/>
+  <rect x="372" y="334" width="40" height="30" rx="6" fill="#FFFFFF"/>
+</svg>
