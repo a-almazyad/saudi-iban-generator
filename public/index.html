@@ -162,6 +162,17 @@
       .iban-text { font-size: 0.95rem; }
     }
     .force-ltr { direction: ltr !important; text-align: left !important; }
+    .bank-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      background: hsl(var(--accent));
+      color: hsl(var(--accent-foreground));
+      font-weight: 600;
+      text-transform: uppercase;
+      line-height: 1;
+    }
   </style>
 </head>
 <body class="bg-[hsl(var(--background))] text-[hsl(var(--foreground))] min-h-screen transition-colors duration-300">
@@ -291,7 +302,7 @@
               <p class="mt-2 font-mono text-base text-[hsl(var(--foreground))] md:text-lg force-ltr" x-ref="ibanText" x-text="animatedIban.length ? formatIban(animatedIban.join('')) : 'SA XX XXXX XXXX XXXX XXXX XXXX'"></p>
               <div class="mt-2 flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'flex-row-reverse text-right' : 'text-left'">
                 <template x-if="generatedIban?.bankCode && bankOptions[generatedIban.bankCode]">
-                  <img :src="bankOptions[generatedIban.bankCode]?.logo" :alt="lang === 'en' ? bankOptions[generatedIban.bankCode].name + ' logo' : 'شعار ' + bankOptions[generatedIban.bankCode].ar" class="h-4 w-4 object-contain" />
+                  <span class="bank-mark h-4 w-4 text-[10px]" x-text="bankOptions[generatedIban.bankCode]?.mark"></span>
                 </template>
                 <span class="truncate" x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
               </div>
@@ -311,7 +322,7 @@
                 >
                   <span class="flex items-center gap-2 overflow-hidden">
                     <template x-if="computedBank()">
-                      <img :src="computedBank().logo" :alt="lang === 'en' ? computedBank().name + ' logo' : 'شعار ' + computedBank().ar" class="h-5 w-5 flex-shrink-0 object-contain" />
+                      <span class="bank-mark h-5 w-5 text-[11px]" x-text="computedBank().mark"></span>
                     </template>
                     <template x-if="!selectedBankCode">
                       <span class="text-lg" aria-hidden="true">🎲</span>
@@ -329,7 +340,7 @@
                   x-transition:leave="transition ease-in duration-75"
                   x-transition:leave-start="opacity-100 scale-100"
                   x-transition:leave-end="opacity-0 scale-95"
-                  class="absolute z-20 mt-1 w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--popover))] p-1 shadow-md"
+                  class="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--popover))] p-1 shadow-md"
                   id="bank-dropdown-list"
                   role="listbox"
                   :aria-labelledby="bank-select-label"
@@ -360,7 +371,7 @@
                       class="flex items-center rounded-sm px-3 py-2 text-sm transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus:bg-[hsl(var(--accent))] focus:text-[hsl(var(--accent-foreground))]"
                       :class="selectedBankCode === code ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : ''"
                     >
-                      <img :src="bank.logo" :alt="lang === 'en' ? bank.name + ' logo' : 'شعار ' + bank.ar" class="h-4 w-4 flex-shrink-0 object-contain" :class="lang === 'ar' ? 'ml-3' : 'mr-3'" />
+                      <span class="bank-mark h-4 w-4 text-[10px]" :class="lang === 'ar' ? 'ml-3' : 'mr-3'" x-text="bank.mark"></span>
                       <span x-text="lang === 'en' ? bank.name : bank.ar"></span>
                     </div>
                   </template>
@@ -430,12 +441,10 @@
                         </div>
                         <div class="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
                           <template x-if="getBankInfoByName(item.bank)">
-                            <img
-                              :src="getBankInfoByName(item.bank)?.logo"
-                              :alt="lang === 'en' ? item.bank + ' logo' : 'شعار ' + (getBankInfoByName(item.bank)?.ar || item.bank)"
-                              class="h-4 w-4 object-contain"
-                              loading="lazy"
-                            />
+                            <span
+                              class="bank-mark h-4 w-4 text-[10px]"
+                              x-text="getBankInfoByName(item.bank)?.mark"
+                            ></span>
                           </template>
                           <span class="truncate" x-text="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)" :title="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)"></span>
                         </div>
@@ -611,18 +620,18 @@
         },
 
         bankOptions: {
-          '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', logo: 'logos/alinma.png' },
-          '10': { name: 'SNB', ar: 'البنك الأهلي السعودي', logo: 'logos/snb.png' },
-          '15': { name: 'Bank Albilad', ar: 'بنك البلاد', logo: 'logos/bilad.png' },
-          '20': { name: 'Riyad Bank', ar: 'بنك الرياض', logo: 'logos/riyad.png' },
-          '30': { name: 'Arab National Bank', ar: 'البنك العربي الوطني', logo: 'logos/anb.png' },
-          '36': { name: 'D360 Bank', ar: 'بنك دي٣٦٠', logo: 'logos/d360.png' },
-          '45': { name: 'SABB', ar: 'ساب', logo: 'logos/sabb.png' },
-          '55': { name: 'BSF', ar: 'البنك السعودي الفرنسي', logo: 'logos/fransi.png' },
-          '60': { name: 'Bank AlJazira', ar: 'بنك الجزيرة', logo: 'logos/jazira.png' },
-          '65': { name: 'Investment Bank', ar: 'البنك السعودي للاستثمار', logo: 'logos/saib.png' },
-          '78': { name: 'STC Bank', ar: 'بنك إس تي سي', logo: 'logos/stc.png' },
-          '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', logo: 'logos/rajhi.png' }
+          '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', mark: 'IN' },
+          '10': { name: 'SNB', ar: 'البنك الأهلي السعودي', mark: 'SN' },
+          '15': { name: 'Bank Albilad', ar: 'بنك البلاد', mark: 'BB' },
+          '20': { name: 'Riyad Bank', ar: 'بنك الرياض', mark: 'RB' },
+          '30': { name: 'Arab National Bank', ar: 'البنك العربي الوطني', mark: 'AN' },
+          '36': { name: 'D360 Bank', ar: 'بنك دي٣٦٠', mark: 'D3' },
+          '45': { name: 'SABB', ar: 'ساب', mark: 'SB' },
+          '55': { name: 'BSF', ar: 'البنك السعودي الفرنسي', mark: 'BF' },
+          '60': { name: 'Bank AlJazira', ar: 'بنك الجزيرة', mark: 'BJ' },
+          '65': { name: 'Investment Bank', ar: 'البنك السعودي للاستثمار', mark: 'SI' },
+          '78': { name: 'STC Bank', ar: 'بنك إس تي سي', mark: 'ST' },
+          '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', mark: 'AR' }
         },
 
         init() {
