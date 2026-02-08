@@ -463,6 +463,33 @@
             </div>
           </div>
         </section>
+
+        <section aria-labelledby="banks-heading" class="lg:col-span-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+          <div class="space-y-1.5 p-6">
+            <h2 id="banks-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Supported Saudi Banks' : 'البنوك السعودية المدعومة'"></h2>
+            <p class="text-xs text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Browse the banks and their official logos.' : 'استعرض البنوك وشعاراتها الرسمية.'"></p>
+          </div>
+          <div class="px-6 pb-6">
+            <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <template x-for="(bank, code) in bankOptions" :key="code">
+                <li class="flex items-center gap-3 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] p-3">
+                  <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-[hsl(var(--border))] bg-white">
+                    <img
+                      class="h-8 w-8 object-contain"
+                      :src="bank.logo"
+                      :alt="lang === 'en' ? bank.name + ' logo' : 'شعار ' + bank.ar"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium leading-tight" x-text="lang === 'en' ? bank.name : bank.ar"></p>
+                    <p class="text-xs text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Bank code: ' + code : 'رمز البنك: ' + code"></p>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </section>
       </div>
 
       <div x-show="activeTab==='card'" class="grid gap-6 lg:grid-cols-2" x-cloak>
@@ -624,18 +651,18 @@
         },
 
         bankOptions: {
-          '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', mark: 'IN' },
-          '10': { name: 'SNB', ar: 'البنك الأهلي السعودي', mark: 'SN' },
-          '15': { name: 'Bank Albilad', ar: 'بنك البلاد', mark: 'BB' },
-          '20': { name: 'Riyad Bank', ar: 'بنك الرياض', mark: 'RB' },
-          '30': { name: 'Arab National Bank', ar: 'البنك العربي الوطني', mark: 'AN' },
-          '36': { name: 'D360 Bank', ar: 'بنك دي٣٦٠', mark: 'D3' },
-          '45': { name: 'SABB', ar: 'ساب', mark: 'SB' },
-          '55': { name: 'BSF', ar: 'البنك السعودي الفرنسي', mark: 'BF' },
-          '60': { name: 'Bank AlJazira', ar: 'بنك الجزيرة', mark: 'BJ' },
-          '65': { name: 'Investment Bank', ar: 'البنك السعودي للاستثمار', mark: 'SI' },
-          '78': { name: 'STC Bank', ar: 'بنك إس تي سي', mark: 'ST' },
-          '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', mark: 'AR' }
+          '5':  { name: 'Alinma Bank', ar: 'مصرف الإنماء', mark: 'IN', logo: 'logos/alinma.png' },
+          '10': { name: 'SNB', ar: 'البنك الأهلي السعودي', mark: 'SN', logo: 'logos/snb.png' },
+          '15': { name: 'Bank Albilad', ar: 'بنك البلاد', mark: 'BB', logo: 'logos/bilad.png' },
+          '20': { name: 'Riyad Bank', ar: 'بنك الرياض', mark: 'RB', logo: 'logos/riyad.png' },
+          '30': { name: 'Arab National Bank', ar: 'البنك العربي الوطني', mark: 'AN', logo: 'logos/anb.png' },
+          '36': { name: 'D360 Bank', ar: 'بنك دي٣٦٠', mark: 'D3', logo: 'logos/d360.png' },
+          '45': { name: 'SABB', ar: 'ساب', mark: 'SB', logo: 'logos/sabb.png' },
+          '55': { name: 'BSF', ar: 'البنك السعودي الفرنسي', mark: 'BF', logo: 'logos/fransi.png' },
+          '60': { name: 'Bank AlJazira', ar: 'بنك الجزيرة', mark: 'BJ', logo: 'logos/jazira.png' },
+          '65': { name: 'Investment Bank', ar: 'البنك السعودي للاستثمار', mark: 'SI', logo: 'logos/saib.png' },
+          '78': { name: 'STC Bank', ar: 'بنك إس تي سي', mark: 'ST', logo: 'logos/stc.png' },
+          '80': { name: 'Al Rajhi Bank', ar: 'مصرف الراجحي', mark: 'AR', logo: 'logos/rajhi.png' }
         },
 
         init() {
