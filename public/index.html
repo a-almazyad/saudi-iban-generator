@@ -210,7 +210,7 @@
           </div>
           <div class="flex flex-1 flex-col space-y-6 px-6 pb-6">
             <div
-              class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
+              class="min-h-[140px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
               data-iban-highlight
             >
               <div class="flex items-start justify-between gap-2">
@@ -309,7 +309,7 @@
             <button
               @click="generateIban()"
               type="button"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
               x-ref="generateButton"
@@ -422,7 +422,7 @@
             <button
               @click="generateCard()"
               type="button"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
             >
