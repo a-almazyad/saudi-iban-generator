@@ -10,6 +10,7 @@ services:
       php artisan route:cache
       php artisan view:cache
     startCommand: php artisan serve --host=0.0.0.0 --port=10000
+    # NOTE: Do not commit APP_KEY here. Configure it in Render's environment settings.
     envVars:
       - key: APP_ENV
         value: production
