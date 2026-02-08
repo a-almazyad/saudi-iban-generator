@@ -4,36 +4,36 @@
   :lang="lang"
   class="transition-colors duration-300"
   x-data="ibanApp()"
-  x-init="init(); $watch('darkMode', val => {
-    document.documentElement.classList.toggle('dark', val);
-    if (manualToggle) {
-      localStorage.setItem('darkMode', val);
-    }
-  })"
+  x-init="init(); $watch('themePreference', val => applyTheme(val))"
 >
 <head>
     <script>
       (() => {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const manualOverride = localStorage.getItem('darkMode');
-        let useDark;
-        if (manualOverride === 'true' || manualOverride === 'false') {
-          useDark = manualOverride === 'true';
-        } else {
-          useDark = prefersDark;
-        }
+        const storedPreference = localStorage.getItem('themePreference');
+        const legacyDarkMode = localStorage.getItem('darkMode');
+        const resolvedPreference = storedPreference
+          || (legacyDarkMode === 'true' ? 'dark' : legacyDarkMode === 'false' ? 'light' : 'auto');
+        const useDark = resolvedPreference === 'dark'
+          ? true
+          : resolvedPreference === 'light'
+            ? false
+            : prefersDark;
         document.documentElement.classList.toggle('dark', useDark);
       })();
 
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const manualOverride = localStorage.getItem('darkMode');
-        if (manualOverride !== 'true' && manualOverride !== 'false') {
+        const storedPreference = localStorage.getItem('themePreference');
+        const legacyDarkMode = localStorage.getItem('darkMode');
+        const resolvedPreference = storedPreference
+          || (legacyDarkMode === 'true' ? 'dark' : legacyDarkMode === 'false' ? 'light' : 'auto');
+        if (resolvedPreference === 'auto') {
           const prefersDarkNow = e.matches;
           document.documentElement.classList.toggle('dark', prefersDarkNow);
           const rootScope = document.querySelector('[x-data]');
           if (rootScope && rootScope.__x && rootScope.__x.$data) {
             rootScope.__x.$data.darkMode = prefersDarkNow;
-            rootScope.__x.$data.manualToggle = false;
+            rootScope.__x.$data.themePreference = 'auto';
           }
         }
       });
@@ -195,18 +195,41 @@
         ></p>
       </div>
       <div class="flex items-center gap-2">
-        <button
-          @click="toggleTheme()"
-          @keydown.enter.prevent="toggleTheme()"
-          @keydown.space.prevent="toggleTheme()"
-          type="button"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-sm font-medium transition-colors hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
-          :aria-label="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
-          :title="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
-        >
-          <span x-show="!darkMode" class="text-lg" aria-hidden="true">🌙</span>
-          <span x-show="darkMode" class="text-lg" x-cloak aria-hidden="true">🌞</span>
-        </button>
+        <div class="inline-flex items-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-1 text-xs font-medium text-[hsl(var(--muted-foreground))]">
+          <button
+            @click="setTheme('light')"
+            type="button"
+            class="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+            :class="themePreference === 'light' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
+            :aria-pressed="(themePreference === 'light').toString()"
+            :title="lang === 'en' ? 'Light theme' : 'الوضع الفاتح'"
+          >
+            <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <span x-text="lang === 'en' ? 'Light' : 'فاتح'"></span>
+          </button>
+          <button
+            @click="setTheme('dark')"
+            type="button"
+            class="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+            :class="themePreference === 'dark' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
+            :aria-pressed="(themePreference === 'dark').toString()"
+            :title="lang === 'en' ? 'Dark theme' : 'الوضع الداكن'"
+          >
+            <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span x-text="lang === 'en' ? 'Dark' : 'داكن'"></span>
+          </button>
+          <button
+            @click="setTheme('auto')"
+            type="button"
+            class="inline-flex items-center gap-1 rounded-sm px-2.5 py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+            :class="themePreference === 'auto' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
+            :aria-pressed="(themePreference === 'auto').toString()"
+            :title="lang === 'en' ? 'Match system theme' : 'مطابقة إعدادات النظام'"
+          >
+            <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg>
+            <span x-text="lang === 'en' ? 'Auto' : 'تلقائي'"></span>
+          </button>
+        </div>
         <button
           @click="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
           @keydown.enter.prevent="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
@@ -554,7 +577,7 @@
       return {
         lang: localStorage.getItem('lang') || 'en',
         darkMode: false,
-        manualToggle: false,
+        themePreference: 'auto',
         generating: false,
         activeTab: 'iban',
         generatedIban: null,
@@ -603,12 +626,15 @@
         },
 
         init() {
-          const manual = localStorage.getItem('darkMode');
-          this.manualToggle = (manual === 'true' || manual === 'false');
-          this.darkMode = document.documentElement.classList.contains('dark');
+          const storedPreference = localStorage.getItem('themePreference');
+          const legacyDarkMode = localStorage.getItem('darkMode');
+          this.themePreference = storedPreference
+            || (legacyDarkMode === 'true' ? 'dark' : legacyDarkMode === 'false' ? 'light' : 'auto');
+          this.applyTheme(this.themePreference, false);
           this.lang = localStorage.getItem('lang') || 'en';
           this.loadHistory();
           this.fetchVersion();
+          this.registerThemeListener();
 
           this.$watch('lang', (newLang) => {
             if (this.generatedIban && this.generatedIban.bankCode) {
@@ -617,6 +643,34 @@
                     this.generatedIban.bank = newLang === 'en' ? bankInfo.name : bankInfo.ar;
                     this.animatedBankName = this.generatedIban.bank;
                 }
+            }
+          });
+        },
+
+        applyTheme(preference, persist = true) {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const resolved = preference === 'dark'
+            ? true
+            : preference === 'light'
+              ? false
+              : prefersDark;
+          this.darkMode = resolved;
+          document.documentElement.classList.toggle('dark', resolved);
+          if (persist) {
+            localStorage.setItem('themePreference', preference);
+            localStorage.removeItem('darkMode');
+          }
+        },
+
+        setTheme(preference) {
+          this.themePreference = preference;
+        },
+
+        registerThemeListener() {
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+          mediaQuery.addEventListener('change', () => {
+            if (this.themePreference === 'auto') {
+              this.applyTheme('auto', false);
             }
           });
         },
@@ -644,11 +698,6 @@
               const el = document.getElementById('version-code');
               if (el) el.textContent = 'N/A';
             });
-        },
-
-        toggleTheme() {
-          this.manualToggle = true;
-          this.darkMode = !this.darkMode;
         },
 
         loadHistory() {
