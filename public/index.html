@@ -145,7 +145,7 @@
     <span x-show="toastType === 'error'" aria-hidden="true">❌</span>
   </div>
 
-  <div class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-10">
+  <div class="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-12">
     <header class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div class="space-y-2">
         <p class="text-sm font-medium text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Saudi IBAN Generator' : 'مولد الآيبان السعودي'"></p>
@@ -203,14 +203,14 @@
       </div>
 
       <div x-show="activeTab==='iban'" class="grid gap-6 lg:grid-cols-2" x-cloak>
-        <section aria-labelledby="generator-heading" class="flex min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="generator-heading" class="flex min-h-[500px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex flex-col space-y-1.5 p-6">
             <h2 id="generator-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Saudi IBAN Generator' : 'مولد الآيبان السعودي 🇸🇦'"></h2>
             <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate valid-format Saudi IBANs.' : 'توليد آيبانات سعودية بتنسيق صحيح.'"></p>
           </div>
-          <div class="flex flex-1 flex-col space-y-6 px-6 pb-6">
+          <div class="flex flex-1 flex-col space-y-5 px-6 pb-6">
             <div
-              class="min-h-[140px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
+              class="min-h-[160px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
               data-iban-highlight
             >
               <div class="flex items-start justify-between gap-2">
@@ -245,7 +245,7 @@
                   :aria-expanded="dropdownOpen.toString()"
                   aria-controls="bank-dropdown-list"
                   aria-labelledby="bank-select-label"
-                  class="flex w-full items-center justify-between rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                  class="flex h-11 w-full items-center justify-between rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-3 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
                 >
                   <span class="flex items-center gap-2 overflow-hidden">
                     <template x-if="computedBank()">
@@ -309,7 +309,7 @@
             <button
               @click="generateIban()"
               type="button"
-              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
               x-ref="generateButton"
@@ -320,7 +320,7 @@
           </div>
         </section>
 
-        <section aria-labelledby="history-heading" class="flex min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="history-heading" class="flex min-h-[500px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex items-center justify-between p-6">
             <div class="space-y-1">
               <h2 id="history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
@@ -391,13 +391,13 @@
       </div>
 
       <div x-show="activeTab==='card'" class="grid gap-6 lg:grid-cols-2" x-cloak>
-        <section aria-labelledby="card-heading" class="flex min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="card-heading" class="flex min-h-[500px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex flex-col space-y-1.5 p-6">
             <h2 id="card-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Credit Card Generator' : 'مولد بطاقات الائتمان 🇸🇦'"></h2>
             <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate random Saudi credit card data.' : 'توليد بيانات بطاقات سعودية عشوائية.'"></p>
           </div>
-          <div class="flex flex-1 flex-col space-y-6 px-6 pb-6">
-            <div class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left">
+          <div class="flex flex-1 flex-col space-y-5 px-6 pb-6">
+            <div class="min-h-[160px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left">
               <div class="flex items-start justify-between gap-2">
                 <p class="text-xs font-semibold text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
                 <button
@@ -422,7 +422,7 @@
             <button
               @click="generateCard()"
               type="button"
-              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
             >
@@ -432,7 +432,7 @@
           </div>
         </section>
 
-        <section aria-labelledby="card-history-heading" class="flex min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="card-history-heading" class="flex min-h-[500px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex items-center justify-between p-6">
             <div class="space-y-1">
               <h2 id="card-history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
