@@ -51,28 +51,58 @@
   <script src="creditCard.js"></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🇸🇦</text></svg>">
   <style>
-    @keyframes spinHalf { 0% { transform: rotate(0deg); } 100% { transform: rotate(180deg); } }
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222.2 47.4% 11.2%;
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 47.4% 11.2%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 47.4% 11.2%;
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+      --destructive: 0 100% 50%;
+      --destructive-foreground: 210 40% 98%;
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 215 20.2% 65.1%;
+      --radius: 0.5rem;
+    }
+
+    .dark {
+      --background: 224 71% 4%;
+      --foreground: 213 31% 91%;
+      --card: 224 71% 4%;
+      --card-foreground: 213 31% 91%;
+      --popover: 224 71% 4%;
+      --popover-foreground: 213 31% 91%;
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+      --secondary: 222.2 47.4% 11.2%;
+      --secondary-foreground: 210 40% 98%;
+      --muted: 223 47% 11%;
+      --muted-foreground: 215.4 16.3% 56.9%;
+      --accent: 216 34% 17%;
+      --accent-foreground: 210 40% 98%;
+      --destructive: 0 63% 31%;
+      --destructive-foreground: 210 40% 98%;
+      --border: 216 34% 17%;
+      --input: 216 34% 17%;
+      --ring: 216 34% 17%;
+    }
+
+    @keyframes spinHalf {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(180deg); }
+    }
     .animate-spin-half { animation: spinHalf 0.5s ease-in-out; }
 
-    body::before {
-      content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-      background: linear-gradient(-45deg, #e0f2f7, #f1f8e9, #fff3e0, #fce4ec);
-      background-size: 400% 400%; animation: gradientShift 18s ease infinite; transition: background 0.5s;
-    }
-    .dark body::before {
-      background: linear-gradient(-45deg, #0f172a, #1e293b, #3b0764, #0c4a6e, #334155);
-      background-size: 400% 400%; animation: gradientShift 50s ease infinite;
-    }
-    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
     [x-cloak] { display: none !important; }
-
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
-    .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-    .dark .custom-scrollbar { scrollbar-color: #4b5563 transparent; }
 
     .pulse-highlight { animation: pulseFade 1.5s ease-out; }
     @keyframes pulseFade {
@@ -88,15 +118,14 @@
     }
 
     .history-list-item { will-change: opacity, transform; }
-    .iban-text { font-size: 0.90rem; line-height: 1.4; }
+    .iban-text { font-size: 0.9rem; line-height: 1.4; }
     @media (min-width: 640px) {
-      .iban-text { font-size: 0.93rem; }
+      .iban-text { font-size: 0.95rem; }
     }
     .force-ltr { direction: ltr !important; text-align: left !important; }
   </style>
 </head>
-<body class="bg-transparent text-gray-800 dark:text-gray-100 flex flex-col items-center min-h-screen p-4 transition-colors duration-300">
-
+<body class="bg-[hsl(var(--background))] text-[hsl(var(--foreground))] min-h-screen transition-colors duration-300">
   <div
     x-show="showToast"
     x-transition:enter="transition ease-out duration-300"
@@ -105,7 +134,7 @@
     x-transition:leave="transition ease-in duration-300"
     x-transition:leave-start="opacity-100 transform translate-y-0"
     x-transition:leave-end="opacity-0 transform translate-y-2"
-    class="fixed top-6 left-1/2 transform -translate-x-1/2 max-w-[90%] bg-white text-black dark:bg-gray-700 dark:text-white px-5 py-3 rounded-lg shadow-lg ring-1 ring-gray-300 dark:ring-gray-600 z-50 text-sm font-medium flex items-center gap-2"
+    class="fixed top-6 left-1/2 z-50 flex w-full max-w-sm -translate-x-1/2 items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-4 py-3 text-sm font-medium shadow-lg"
     x-cloak
     role="alert"
     aria-live="polite"
@@ -116,341 +145,365 @@
     <span x-show="toastType === 'error'" aria-hidden="true">❌</span>
   </div>
 
-  <div class="fixed top-4 right-4 z-30 flex items-center gap-3">
-     <button
-      @click="toggleTheme()"
-      @keydown.enter.prevent="toggleTheme()"
-      @keydown.space.prevent="toggleTheme()"
-      type="button"
-      class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 transition transform hover:scale-110"
-      :aria-label="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
-      :title="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
-    >
-      <span x-show="!darkMode" class="text-xl" aria-hidden="true">🌙</span>
-      <span x-show="darkMode" class="text-xl" x-cloak aria-hidden="true">🌞</span>
-    </button>
-    <button
-      @click="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
-      @keydown.enter.prevent="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
-      @keydown.space.prevent="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
-      type="button"
-      class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-900 transition transform hover:scale-110"
-      :aria-label="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
-      :title="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
-    >
-      <span x-text="lang === 'en' ? '🇸🇦' : '🇬🇧'" class="text-xl" aria-hidden="true"></span>
-    </button>
-  </div>
+  <div class="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-10">
+    <header class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div class="space-y-2">
+        <p class="text-sm font-medium text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Saudi IBAN Generator' : 'مولد الآيبان السعودي'"></p>
+        <h1 class="text-2xl font-semibold tracking-tight" x-text="lang === 'en' ? 'Generate compliant Saudi IBANs and cards' : 'توليد آيبانات وبطاقات سعودية متوافقة'"></h1>
+        <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Built with the shadcn/ui design system and default palette.' : 'مصمم باستخدام نظام shadcn/ui ولوحة الألوان الافتراضية.'"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          @click="toggleTheme()"
+          @keydown.enter.prevent="toggleTheme()"
+          @keydown.space.prevent="toggleTheme()"
+          type="button"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-sm font-medium transition-colors hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+          :aria-label="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
+          :title="darkMode ? (lang === 'en' ? 'Switch to Light Mode' : 'التبديل إلى الوضع الفاتح') : (lang === 'en' ? 'Switch to Dark Mode' : 'التبديل إلى الوضع الداكن')"
+        >
+          <span x-show="!darkMode" class="text-lg" aria-hidden="true">🌙</span>
+          <span x-show="darkMode" class="text-lg" x-cloak aria-hidden="true">🌞</span>
+        </button>
+        <button
+          @click="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
+          @keydown.enter.prevent="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
+          @keydown.space.prevent="lang = lang === 'en' ? 'ar' : 'en'; localStorage.setItem('lang', lang)"
+          type="button"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-sm font-medium transition-colors hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+          :aria-label="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
+          :title="lang === 'en' ? 'التبديل إلى العربية' : 'Switch to English'"
+        >
+          <span x-text="lang === 'en' ? '🇸🇦' : '🇬🇧'" class="text-lg" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
 
-  <main class="w-full max-w-md flex flex-col items-center space-y-8 pt-16 pb-24 px-2 sm:px-0">
-
-    <div class="mb-4 flex w-full" :class="lang === 'ar' ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'" role="tablist">
-      <button @click="activeTab='iban'" :class="activeTab==='iban' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'" class="flex-1 py-2 rounded-full text-sm font-medium focus:outline-none">
-        <span x-text="lang === 'en' ? 'IBAN Generator' : 'مولد الآيبان'"></span>
-      </button>
-      <button @click="activeTab='card'" :class="activeTab==='card' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'" class="flex-1 py-2 rounded-full text-sm font-medium focus:outline-none">
-        <span x-text="lang === 'en' ? 'Credit Card Generator' : 'مولد البطاقات'"></span>
-      </button>
-    </div>
-
-    <section x-show="activeTab==='iban'" aria-labelledby="generator-heading" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md dark:text-white p-6 sm:p-8 rounded-2xl shadow-xl w-full text-center transition-all duration-300 flex flex-col" x-cloak>
-      <div class="mb-6">
-        <h1 id="generator-heading" class="text-2xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white"
-            x-text="lang === 'en' ? '🇸🇦 Saudi IBAN Generator' : 'مولد الآيبان السعودي 🇸🇦'">
-        </h1>
-         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="lang === 'en' ? 'Generate valid-format Saudi IBANs' : 'توليد آيبانات سعودية بتنسيق صحيح'"></p>
+    <main class="mt-10 grid gap-6">
+      <div class="flex justify-center" role="tablist">
+        <div class="inline-flex h-10 items-center justify-center rounded-md bg-[hsl(var(--muted))] p-1 text-[hsl(var(--muted-foreground))]">
+          <button
+            @click="activeTab='iban'"
+            class="inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+            :class="activeTab==='iban' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
+          >
+            <span x-text="lang === 'en' ? 'IBAN Generator' : 'مولد الآيبان'"></span>
+          </button>
+          <button
+            @click="activeTab='card'"
+            class="inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+            :class="activeTab==='card' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
+          >
+            <span x-text="lang === 'en' ? 'Credit Card Generator' : 'مولد البطاقات'"></span>
+          </button>
+        </div>
       </div>
 
-      <div
-        class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300 overflow-hidden"
-        :class="['transition-all', 'duration-500', 'rounded-lg']"
-        :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'"
-        data-iban-highlight
-      >
-        <div>
-          <div class="flex justify-between items-start mb-1 gap-2">
-              <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow"
-                 x-text="lang === 'en' ? 'Generated IBAN' : 'الآيبان المُولد'"
-                 :class="lang === 'ar' ? 'text-right' : 'text-left'"></p>
-              <button
+      <div x-show="activeTab==='iban'" class="grid gap-6 lg:grid-cols-2" x-cloak>
+        <section aria-labelledby="generator-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+          <div class="flex flex-col space-y-1.5 p-6">
+            <h2 id="generator-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Saudi IBAN Generator' : 'مولد الآيبان السعودي 🇸🇦'"></h2>
+            <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate valid-format Saudi IBANs.' : 'توليد آيبانات سعودية بتنسيق صحيح.'"></p>
+          </div>
+          <div class="space-y-6 px-6 pb-6">
+            <div
+              class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
+              data-iban-highlight
+            >
+              <div class="flex items-start justify-between gap-2">
+                <p class="text-xs font-semibold text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated IBAN' : 'الآيبان المُولد'"></p>
+                <button
                   @click="copyIban()"
                   :disabled="!generatedIban"
                   type="button"
-                  class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 flex-shrink-0"
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-50"
                   :aria-label="lang === 'en' ? 'Copy IBAN' : 'نسخ الآيبان'"
-                  :title="lang === 'en' ? 'Copy IBAN' : 'نسخ الآيبان'">
-                  <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              </button>
-          </div>
-          <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr"
-             x-ref="ibanText"
-             x-text="animatedIban.length ? formatIban(animatedIban.join('')) : 'SA XX XXXX XXXX XXXX XXXX XXXX'">
-          </p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2 min-h-[1rem] flex items-center gap-1.5"
-             :class="lang === 'ar' ? 'justify-start flex-row-reverse text-right' : 'justify-start text-left'">
-              <template x-if="generatedIban?.bankCode && bankOptions[generatedIban.bankCode]">
-                 <img :src="bankOptions[generatedIban.bankCode]?.logo" :alt="lang === 'en' ? bankOptions[generatedIban.bankCode].name + ' logo' : 'شعار ' + bankOptions[generatedIban.bankCode].ar" class="w-3 h-3 inline-block object-contain flex-shrink-0" />
-              </template>
-              <span class="truncate" :class="lang === 'ar' ? 'text-left w-full text-sm text-gray-600 dark:text-gray-400' : 'text-sm text-gray-600 dark:text-gray-400'" x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
-          </p>
-        </div>
-      </div>
-
-      <div class="mb-6 text-left">
-        <label id="bank-select-label" class="text-sm font-semibold text-gray-700 dark:text-gray-300 block mb-1.5"
-               x-text="lang === 'en' ? 'Choose a bank (optional)' : 'اختر بنكًا (اختياري)'"
-               :class="lang === 'ar' ? 'text-right' : ''"></label>
-        <div class="relative" x-data="{ dropdownOpen: false }">
-          <button @click="dropdownOpen = !dropdownOpen" type="button"
-               aria-haspopup="listbox"
-               :aria-expanded="dropdownOpen.toString()"
-               aria-controls="bank-dropdown-list"
-               aria-labelledby="bank-select-label"
-               class="w-full cursor-pointer bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2.5 text-sm flex items-center justify-between hover:border-gray-400 dark:hover:border-gray-500 transition">
-            <span class="flex items-center gap-2 overflow-hidden flex-grow min-w-0">
-              <template x-if="computedBank()">
-                <img :src="computedBank().logo" :alt="lang === 'en' ? computedBank().name + ' logo' : 'شعار ' + computedBank().ar" class="w-5 h-5 flex-shrink-0 object-contain" />
-              </template>
-              <template x-if="!selectedBankCode">
-                <span class="text-lg flex-shrink-0" aria-hidden="true">🎲</span>
-              </template>
-              <span class="truncate" x-text="computedBank() ? (lang === 'en' ? computedBank().name : computedBank().ar) : (lang === 'en' ? 'Random Bank' : 'بنك عشوائي')"></span>
-            </span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-200 flex-shrink-0 ml-2" :class="{ 'rotate-180': dropdownOpen }" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div x-show="dropdownOpen" @click.outside="dropdownOpen = false"
-               x-transition:enter="transition ease-out duration-100"
-               x-transition:enter-start="opacity-0 scale-95"
-               x-transition:enter-end="opacity-100 scale-100"
-               x-transition:leave="transition ease-in duration-75"
-               x-transition:leave-start="opacity-100 scale-100"
-               x-transition:leave-end="opacity-0 scale-95"
-               class="absolute z-20 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto custom-scrollbar focus:outline-none"
-               id="bank-dropdown-list"
-               role="listbox"
-               :aria-labelledby="bank-select-label"
-               tabindex="-1"
-               x-cloak>
-            <div @click="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()"
-                 role="option"
-                 :aria-selected="selectedBankCode === ''"
-                 :class="{ 'bg-blue-50 dark:bg-blue-900/50': selectedBankCode === '' }"
-                 tabindex="0" @keydown.enter.prevent.stop="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()" @keydown.space.prevent.stop="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()"
-                 class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer gap-2 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-600">
-              <span class="text-lg" aria-hidden="true">🎲</span>
-              <span x-text="lang === 'en' ? 'Random Bank' : 'بنك عشوائي'"></span>
-            </div>
-            <template x-for="(bank, code) in bankOptions" :key="code">
-              <div @click="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
-                   role="option"
-                   :aria-selected="selectedBankCode === code"
-                   :class="{ 'bg-blue-50 dark:bg-blue-900/50': selectedBankCode === code }"
-                   tabindex="0" @keydown.enter.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()" @keydown.space.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
-                   class="flex items-center px-4 py-2.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-600">
-                <img :src="bank.logo" :alt="lang === 'en' ? bank.name + ' logo' : 'شعار ' + bank.ar" class="w-5 h-5 flex-shrink-0 object-contain" :class="lang === 'ar' ? 'ml-3' : 'mr-3'" />
-                <span x-text="lang === 'en' ? bank.name : bank.ar"></span>
+                  :title="lang === 'en' ? 'Copy IBAN' : 'نسخ الآيبان'"
+                >
+                  <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
               </div>
-            </template>
-          </div>
-        </div>
-      </div>
+              <p class="mt-2 font-mono text-base text-[hsl(var(--foreground))] md:text-lg force-ltr" x-ref="ibanText" x-text="animatedIban.length ? formatIban(animatedIban.join('')) : 'SA XX XXXX XXXX XXXX XXXX XXXX'"></p>
+              <div class="mt-2 flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'flex-row-reverse text-right' : 'text-left'">
+                <template x-if="generatedIban?.bankCode && bankOptions[generatedIban.bankCode]">
+                  <img :src="bankOptions[generatedIban.bankCode]?.logo" :alt="lang === 'en' ? bankOptions[generatedIban.bankCode].name + ' logo' : 'شعار ' + bankOptions[generatedIban.bankCode].ar" class="h-4 w-4 object-contain" />
+                </template>
+                <span class="truncate" x-text="animatedBankName || (generatedIban?.bank || (lang === 'en' ? 'N/A' : 'غير متاح'))"></span>
+              </div>
+            </div>
 
-      <button
-        @click="generateIban()"
-        type="button"
-        class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-green-300/40 dark:focus:ring-green-500/30"
-        :disabled="generating"
-        :class="{ 'opacity-75 cursor-wait': generating }"
-        x-ref="generateButton"
-      >
-        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        <span x-text="generating ? (lang === 'en' ? 'Generating...' : 'جاري التوليد...') : (lang === 'en' ? 'Generate IBAN' : 'توليد آيبان')"></span>
-      </button>
-    </section>
+            <div class="space-y-2 text-left">
+              <label id="bank-select-label" class="text-sm font-medium" x-text="lang === 'en' ? 'Choose a bank (optional)' : 'اختر بنكًا (اختياري)'" :class="lang === 'ar' ? 'text-right' : ''"></label>
+              <div class="relative" x-data="{ dropdownOpen: false }">
+                <button
+                  @click="dropdownOpen = !dropdownOpen"
+                  type="button"
+                  aria-haspopup="listbox"
+                  :aria-expanded="dropdownOpen.toString()"
+                  aria-controls="bank-dropdown-list"
+                  aria-labelledby="bank-select-label"
+                  class="flex w-full items-center justify-between rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-3 py-2 text-sm shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                >
+                  <span class="flex items-center gap-2 overflow-hidden">
+                    <template x-if="computedBank()">
+                      <img :src="computedBank().logo" :alt="lang === 'en' ? computedBank().name + ' logo' : 'شعار ' + computedBank().ar" class="h-5 w-5 flex-shrink-0 object-contain" />
+                    </template>
+                    <template x-if="!selectedBankCode">
+                      <span class="text-lg" aria-hidden="true">🎲</span>
+                    </template>
+                    <span class="truncate" x-text="computedBank() ? (lang === 'en' ? computedBank().name : computedBank().ar) : (lang === 'en' ? 'Random Bank' : 'بنك عشوائي')"></span>
+                  </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': dropdownOpen }" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div
+                  x-show="dropdownOpen"
+                  @click.outside="dropdownOpen = false"
+                  x-transition:enter="transition ease-out duration-100"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-75"
+                  x-transition:leave-start="opacity-100 scale-100"
+                  x-transition:leave-end="opacity-0 scale-95"
+                  class="absolute z-20 mt-1 w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--popover))] p-1 shadow-md"
+                  id="bank-dropdown-list"
+                  role="listbox"
+                  :aria-labelledby="bank-select-label"
+                  tabindex="-1"
+                  x-cloak
+                >
+                  <div
+                    @click="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()"
+                    role="option"
+                    :aria-selected="selectedBankCode === ''"
+                    tabindex="0"
+                    @keydown.enter.prevent.stop="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()"
+                    @keydown.space.prevent.stop="selectedBankCode = ''; dropdownOpen = false; $event.target.closest('button').focus()"
+                    class="flex items-center gap-2 rounded-sm px-3 py-2 text-sm transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus:bg-[hsl(var(--accent))] focus:text-[hsl(var(--accent-foreground))]"
+                    :class="selectedBankCode === '' ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : ''"
+                  >
+                    <span class="text-lg" aria-hidden="true">🎲</span>
+                    <span x-text="lang === 'en' ? 'Random Bank' : 'بنك عشوائي'"></span>
+                  </div>
+                  <template x-for="(bank, code) in bankOptions" :key="code">
+                    <div
+                      @click="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
+                      role="option"
+                      :aria-selected="selectedBankCode === code"
+                      tabindex="0"
+                      @keydown.enter.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
+                      @keydown.space.prevent.stop="selectedBankCode = code; dropdownOpen = false; $event.target.closest('button').focus()"
+                      class="flex items-center rounded-sm px-3 py-2 text-sm transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus:bg-[hsl(var(--accent))] focus:text-[hsl(var(--accent-foreground))]"
+                      :class="selectedBankCode === code ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : ''"
+                    >
+                      <img :src="bank.logo" :alt="lang === 'en' ? bank.name + ' logo' : 'شعار ' + bank.ar" class="h-4 w-4 flex-shrink-0 object-contain" :class="lang === 'ar' ? 'ml-3' : 'mr-3'" />
+                      <span x-text="lang === 'en' ? bank.name : bank.ar"></span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
 
-    <section x-show="activeTab==='card'" aria-labelledby="card-heading" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md dark:text-white p-6 sm:p-8 rounded-2xl shadow-xl w-full text-center transition-all duration-300 flex flex-col" x-cloak>
-      <div class="mb-6">
-        <h1 id="card-heading" class="text-2xl font-bold flex items-center justify-center gap-2 text-gray-900 dark:text-white" x-text="lang === 'en' ? '🇸🇦 Credit Card Generator' : 'مولد بطاقات الائتمان 🇸🇦'"></h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" x-text="lang === 'en' ? 'Generate random Saudi credit card' : 'توليد بطاقة ائتمان سعودية عشوائية'"></p>
-      </div>
-
-      <div class="mb-6 text-left min-h-[110px] flex flex-col justify-center p-4 rounded-lg transition-colors duration-300 overflow-hidden" :class="['transition-all','duration-500','rounded-lg']" :style="darkMode ? 'background-color: rgba(107,114,128,0.2)' : 'background-color: #fffde7'">
-        <div>
-          <div class="flex justify-between items-start mb-1 gap-2">
-            <p class="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300 flex-grow" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
             <button
-              @click="copyCard()"
-              :disabled="!generatedCard"
+              @click="generateIban()"
               type="button"
-              class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 flex-shrink-0"
-              :aria-label="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'"
-              :title="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'">
-              <svg class="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              :disabled="generating"
+              :class="{ 'opacity-75 cursor-wait': generating }"
+              x-ref="generateButton"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span x-text="generating ? (lang === 'en' ? 'Generating...' : 'جاري التوليد...') : (lang === 'en' ? 'Generate IBAN' : 'توليد آيبان')"></span>
             </button>
           </div>
-          <p class="text-blue-700 dark:text-blue-400 font-mono break-words text-lg md:text-xl min-h-[2rem] leading-tight force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-2" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'FULL NAME' : 'الاسم الكامل')"></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
-          <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="generatedCard ? (lang === 'en' ? 'CVV: ' + generatedCard.cvv : 'رمز: ' + generatedCard.cvv) : (lang === 'en' ? 'CVV: ***' : 'رمز: ***')"></p>
-        </div>
+        </section>
+
+        <section aria-labelledby="history-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+          <div class="flex items-center justify-between p-6">
+            <div class="space-y-1">
+              <h2 id="history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
+              <p class="text-xs text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Last generated IBANs and banks.' : 'آخر الآيبانات والبنوك المُولدة.'"></p>
+            </div>
+            <button
+              @click="clearHistory()"
+              type="button"
+              class="inline-flex items-center gap-1 rounded-md border border-transparent px-2 py-1 text-xs font-medium transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:opacity-50"
+              :disabled="!ibanHistory.length"
+              :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'"
+              :title="lang === 'en' ? 'Clear History' : 'مسح السجل'"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
+              <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
+            </button>
+          </div>
+          <div class="px-6 pb-6">
+            <div class="min-h-[180px]">
+              <template x-if="ibanHistory.length">
+                <ul class="space-y-2" aria-labelledby="history-heading">
+                  <template x-for="(item, index) in ibanHistory" :key="item.iban + index">
+                    <li
+                      class="history-list-item iban-history-list-item rounded-md border border-[hsl(var(--border))] p-3 text-sm transition"
+                      :class="{
+                        'bg-[hsl(var(--background))] shadow-sm': index === 0,
+                        'bg-[hsl(var(--muted))]': index > 0
+                      }"
+                      x-transition:enter="transition ease-out duration-300"
+                      x-transition:enter-start="opacity-0 transform -translate-y-2"
+                      x-transition:enter-end="opacity-100 transform translate-y-0"
+                    >
+                      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex items-center gap-2 min-w-0">
+                          <span class="iban-text font-mono text-[hsl(var(--foreground))] truncate force-ltr" x-text="formatIban(item.iban)" :title="item.iban"></span>
+                          <button
+                            @click="copyIbanFromHistory(item.iban)"
+                            type="button"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                            :aria-label="(lang === 'en' ? 'Copy IBAN: ' : 'نسخ الآيبان: ') + item.iban"
+                            :title="lang === 'en' ? 'Copy' : 'نسخ'"
+                          >
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                          </button>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
+                          <template x-if="getBankInfoByName(item.bank)">
+                            <img
+                              :src="getBankInfoByName(item.bank)?.logo"
+                              :alt="lang === 'en' ? item.bank + ' logo' : 'شعار ' + (getBankInfoByName(item.bank)?.ar || item.bank)"
+                              class="h-4 w-4 object-contain"
+                              loading="lazy"
+                            />
+                          </template>
+                          <span class="truncate" x-text="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)" :title="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)"></span>
+                        </div>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+              <template x-if="!ibanHistory.length">
+                <p class="pt-10 text-center text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'No recent IBANs.' : 'لا توجد آيبانات حديثة.'"></p>
+              </template>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <button @click="generateCard()" type="button" class="w-full text-base bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white px-6 py-3 rounded-full relative transition-all duration-300 font-semibold flex items-center justify-center gap-2 hover:ring-4 hover:ring-green-300/40 dark:hover:ring-green-500/30 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-green-300/40 dark:focus:ring-green-500/30" :disabled="generating" :class="{ 'opacity-75 cursor-wait': generating }">
-        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        <span x-text="generating ? (lang === 'en' ? 'Generating...' : 'جاري التوليد...') : (lang === 'en' ? 'Generate Card' : 'توليد بطاقة')"></span>
-      </button>
-    </section>
+      <div x-show="activeTab==='card'" class="grid gap-6 lg:grid-cols-2" x-cloak>
+        <section aria-labelledby="card-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+          <div class="flex flex-col space-y-1.5 p-6">
+            <h2 id="card-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Credit Card Generator' : 'مولد بطاقات الائتمان 🇸🇦'"></h2>
+            <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate random Saudi credit card data.' : 'توليد بيانات بطاقات سعودية عشوائية.'"></p>
+          </div>
+          <div class="space-y-6 px-6 pb-6">
+            <div class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left">
+              <div class="flex items-start justify-between gap-2">
+                <p class="text-xs font-semibold text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
+                <button
+                  @click="copyCard()"
+                  :disabled="!generatedCard"
+                  type="button"
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-50"
+                  :aria-label="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'"
+                  :title="lang === 'en' ? 'Copy Card' : 'نسخ البطاقة'"
+                >
+                  <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+              <p class="mt-2 font-mono text-base text-[hsl(var(--foreground))] md:text-lg force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
+              <div class="mt-2 space-y-1 text-xs text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'">
+                <p x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'FULL NAME' : 'الاسم الكامل')"></p>
+                <p x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
+                <p x-text="generatedCard ? (lang === 'en' ? 'CVV: ' + generatedCard.cvv : 'رمز: ' + generatedCard.cvv) : (lang === 'en' ? 'CVV: ***' : 'رمز: ***')"></p>
+              </div>
+            </div>
 
-    <section x-show="activeTab==='iban'" aria-labelledby="history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
-       <div class="flex justify-between items-center mb-3">
-         <h2 id="history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
-          <button
-            @click="clearHistory()"
-            type="button"
-            :class="ibanHistory.length ? 'text-red-500 hover:text-red-700 dark:hover:text-red-400 cursor-pointer' : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'"
-            class="text-xs font-medium transition flex items-center gap-1 disabled:opacity-70 focus:outline-none focus:ring-1 focus:ring-red-500 rounded"
-            :disabled="!ibanHistory.length"
-            :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'"
-            :title="lang === 'en' ? 'Clear History' : 'مسح السجل'">
-             <svg class="w-[14px] h-[14px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
-            <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
-          </button>
-       </div>
-      <div class="min-h-[180px]">
-        <template x-if="ibanHistory.length">
-          <ul class="space-y-1.5" aria-labelledby="history-heading">
-            <template x-for="(item, index) in ibanHistory" :key="item.iban + index">
-              <li
-                class="history-list-item iban-history-list-item p-2 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-3 gap-y-1.5"
-                :class="{
-                  'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
-                  'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
-                  'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0,
-                  'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4,
-                  'opacity-60': index === 5, 'opacity-50': index === 6,
-                }"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform -translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-               >
-                <div class="flex items-center gap-2 flex-grow min-w-0">
-                   <span
-                     class="iban-text font-mono text-gray-800 dark:text-gray-200 truncate force-ltr flex-grow"
-                     x-text="formatIban(item.iban)"
-                     :title="item.iban"
-                   ></span>
-                   <button
-                     @click="copyIbanFromHistory(item.iban)"
-                     type="button"
-                     class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition transform active:scale-95 flex-shrink-0 ml-1 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
-                     :aria-label="(lang === 'en' ? 'Copy IBAN: ' : 'نسخ الآيبان: ') + item.iban"
-                     :title="lang === 'en' ? 'Copy' : 'نسخ'">
-                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                   </button>
-                 </div>
+            <button
+              @click="generateCard()"
+              type="button"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              :disabled="generating"
+              :class="{ 'opacity-75 cursor-wait': generating }"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin-half': generating }"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span x-text="generating ? (lang === 'en' ? 'Generating...' : 'جاري التوليد...') : (lang === 'en' ? 'Generate Card' : 'توليد بطاقة')"></span>
+            </button>
+          </div>
+        </section>
 
-                <div class="flex items-center gap-2 flex-shrink-0 sm:min-w-[150px]">
-                   <template x-if="getBankInfoByName(item.bank)">
-                     <img
-                       :src="getBankInfoByName(item.bank)?.logo"
-                       :alt="lang === 'en' ? item.bank + ' logo' : 'شعار ' + (getBankInfoByName(item.bank)?.ar || item.bank)"
-                       class="w-4 h-4 object-contain block flex-shrink-0" loading="lazy"
-                     />
-                   </template>
-                   <span
-                     x-text="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)"
-                     class="truncate text-gray-600 dark:text-gray-400 text-xs block"
-                     :title="lang === 'en' ? item.bank : (getBankInfoByName(item.bank)?.ar || item.bank)"
-                   ></span>
-                 </div>
-              </li>
-            </template>
-          </ul>
-        </template>
-        <template x-if="!ibanHistory.length">
-          <p class="text-sm text-center text-gray-500 dark:text-gray-400 pt-10" x-text="lang === 'en' ? 'No recent IBANs.' : 'لا توجد آيبانات حديثة.'"></p>
-        </template>
+        <section aria-labelledby="card-history-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+          <div class="flex items-center justify-between p-6">
+            <div class="space-y-1">
+              <h2 id="card-history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
+              <p class="text-xs text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Last generated card details.' : 'آخر بيانات البطاقات المُولدة.'"></p>
+            </div>
+            <button
+              @click="clearCardHistory()"
+              type="button"
+              class="inline-flex items-center gap-1 rounded-md border border-transparent px-2 py-1 text-xs font-medium transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:opacity-50"
+              :disabled="!cardHistory.length"
+              :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'"
+              :title="lang === 'en' ? 'Clear History' : 'مسح السجل'"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
+              <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
+            </button>
+          </div>
+          <div class="px-6 pb-6">
+            <div class="min-h-[180px]">
+              <template x-if="cardHistory.length">
+                <ul class="space-y-2" aria-labelledby="card-history-heading">
+                  <template x-for="(item, index) in cardHistory" :key="item.number + index">
+                    <li
+                      class="history-list-item card-history-list-item rounded-md border border-[hsl(var(--border))] p-3 text-sm transition"
+                      :class="{
+                        'bg-[hsl(var(--background))] shadow-sm': index === 0,
+                        'bg-[hsl(var(--muted))]': index > 0
+                      }"
+                      x-transition:enter="transition ease-out duration-300"
+                      x-transition:enter-start="opacity-0 transform -translate-y-2"
+                      x-transition:enter-end="opacity-100 transform translate-y-0"
+                    >
+                      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                          <span class="iban-text block truncate font-mono text-[hsl(var(--foreground))] force-ltr" x-text="formatCardNumber(item.number)" :title="item.number"></span>
+                          <span class="block truncate text-xs text-[hsl(var(--muted-foreground))]" x-text="item.name" :title="item.name"></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <button
+                            @click="copyCardFromHistory(item.number)"
+                            type="button"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
+                            :aria-label="(lang === 'en' ? 'Copy card: ' : 'نسخ البطاقة: ') + item.number"
+                            :title="lang === 'en' ? 'Copy' : 'نسخ'"
+                          >
+                            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                          </button>
+                          <div class="text-xs text-[hsl(var(--muted-foreground))]">
+                            <span x-text="lang === 'en' ? 'Expiry: ' + item.expiry : 'انتهاء: ' + item.expiry"></span>
+                            <span class="ml-2" x-text="lang === 'en' ? 'CVV: ' + item.cvv : 'رمز: ' + item.cvv"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+              <template x-if="!cardHistory.length">
+                <p class="pt-10 text-center text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'No recent cards.' : 'لا توجد بطاقات حديثة.'"></p>
+              </template>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+    </main>
 
-    <section x-show="activeTab==='card'" aria-labelledby="card-history-heading" class="w-full max-w-md text-left mt-8 px-1" x-cloak>
-       <div class="flex justify-between items-center mb-3">
-         <h2 id="card-history-heading" class="text-base font-semibold text-gray-700 dark:text-gray-300" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
-          <button
-            @click="clearCardHistory()"
-            type="button"
-            :class="cardHistory.length ? 'text-red-500 hover:text-red-700 dark:hover:text-red-400 cursor-pointer' : 'text-gray-400 dark:text-gray-500 cursor-not-allowed'"
-            class="text-xs font-medium transition flex items-center gap-1 disabled:opacity-70 focus:outline-none focus:ring-1 focus:ring-red-500 rounded"
-            :disabled="!cardHistory.length"
-            :aria-label="lang === 'en' ? 'Clear History' : 'مسح السجل'"
-            :title="lang === 'en' ? 'Clear History' : 'مسح السجل'">
-             <svg class="w-[14px] h-[14px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/></svg>
-            <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
-          </button>
-       </div>
-      <div class="min-h-[180px]">
-        <template x-if="cardHistory.length">
-          <ul class="space-y-1.5" aria-labelledby="card-history-heading">
-            <template x-for="(item, index) in cardHistory" :key="item.number + index">
-              <li
-                class="history-list-item card-history-list-item p-2 rounded-md transition duration-200 ease-in-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-x-3 gap-y-1.5"
-                :class="{
-                  'bg-white/60 dark:bg-gray-800/60 shadow-sm': index === 0,
-                  'bg-white/40 dark:bg-gray-800/40': index > 0 && index % 2 !== 0,
-                  'bg-white/30 dark:bg-gray-800/30': index > 0 && index % 2 === 0,
-                  'opacity-100': index < 3, 'opacity-80': index === 3, 'opacity-70': index === 4,
-                  'opacity-60': index === 5, 'opacity-50': index === 6,
-                }"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 transform -translate-y-2"
-                x-transition:enter-end="opacity-100 transform translate-y-0"
-               >
-                <div class="flex items-center gap-2 flex-grow min-w-0">
-                   <div class="min-w-0 flex-grow">
-                     <span
-                       class="iban-text font-mono text-gray-800 dark:text-gray-200 truncate force-ltr block"
-                       x-text="formatCardNumber(item.number)"
-                       :title="item.number"
-                     ></span>
-                     <span
-                       class="truncate text-gray-600 dark:text-gray-400 text-xs block"
-                       x-text="item.name"
-                       :title="item.name"
-                     ></span>
-                   </div>
-                   <button
-                     @click="copyCardFromHistory(item.number)"
-                     type="button"
-                     class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition transform active:scale-95 flex-shrink-0 ml-1 focus:outline-none focus:ring-1 focus:ring-blue-500 rounded"
-                     :aria-label="(lang === 'en' ? 'Copy card: ' : 'نسخ البطاقة: ') + item.number"
-                     :title="lang === 'en' ? 'Copy' : 'نسخ'">
-                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                   </button>
-                 </div>
-
-                <div class="flex items-center gap-2 flex-shrink-0 sm:min-w-[150px] text-xs text-gray-600 dark:text-gray-400">
-                  <span x-text="lang === 'en' ? 'Expiry: ' + item.expiry : 'انتهاء: ' + item.expiry"></span>
-                  <span x-text="lang === 'en' ? 'CVV: ' + item.cvv : 'رمز: ' + item.cvv"></span>
-                </div>
-              </li>
-            </template>
-          </ul>
-        </template>
-        <template x-if="!cardHistory.length">
-          <p class="text-sm text-center text-gray-500 dark:text-gray-400 pt-10" x-text="lang === 'en' ? 'No recent cards.' : 'لا توجد بطاقات حديثة.'"></p>
-        </template>
+    <footer class="mt-10 flex items-center justify-between text-xs text-[hsl(var(--muted-foreground))]">
+      <a href="https://github.com/a-almazyad/saudi-iban-generator" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] px-3 py-2 transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))]">
+        GitHub Project
+      </a>
+      <div class="rounded-md border border-[hsl(var(--border))] px-3 py-2">
+        Version: <span id="version-code">...</span>
       </div>
-    </section>
-
-  </main>
-
-  <footer class="fixed bottom-4 left-4 z-30">
-    <a href="https://github.com/a-almazyad/saudi-iban-generator" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-medium bg-white/60 dark:bg-gray-800/60 px-2 py-1 rounded backdrop-blur-sm shadow-sm">
-      GitHub Project
-    </a>
-  </footer>
-  <div class="fixed bottom-4 right-4 text-xs text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-2 py-1 rounded shadow-sm z-30 backdrop-blur-sm">
-      Version: <span id="version-code">...</span>
+    </footer>
   </div>
 
 
