@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Saudi Arabia flag">
+  <rect width="1200" height="630" fill="#006c35" />
+  <text
+    x="600"
+    y="300"
+    text-anchor="middle"
+    font-size="64"
+    fill="#ffffff"
+    font-family="'Noto Naskh Arabic', 'Amiri', 'Scheherazade', 'Arial', sans-serif"
+  >
+    لا إله إلا الله محمد رسول الله
+  </text>
+  <rect x="360" y="380" width="480" height="20" rx="10" fill="#ffffff" />
+  <rect x="320" y="372" width="40" height="36" rx="6" fill="#ffffff" />
+</svg>
