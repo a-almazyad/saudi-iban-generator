@@ -519,7 +519,7 @@
                   <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 </button>
               </div>
-              <p class="mt-2 font-mono text-base text-[hsl(var(--foreground))] md:text-lg force-ltr" x-text="generatedCard ? formatCardNumber(generatedCard.number) : '#### #### #### ####'"></p>
+              <p class="mt-2 font-mono text-base text-[hsl(var(--foreground))] md:text-lg force-ltr" x-text="animatedCardNumber.length ? formatCardNumber(animatedCardNumber.join('')) : '#### #### #### ####'"></p>
               <div class="mt-2 space-y-1 text-xs text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'">
                 <p x-text="generatedCard ? generatedCard.name : (lang === 'en' ? 'FULL NAME' : 'الاسم الكامل')"></p>
                 <p x-text="generatedCard ? (lang === 'en' ? 'Expiry: ' + generatedCard.expiry : 'انتهاء: ' + generatedCard.expiry) : (lang === 'en' ? 'Expiry: MM/YY' : 'انتهاء: **/**')"></p>
@@ -633,6 +633,7 @@
         cardHistory: [],
         animatedIban: [],
         animatedBankName: '',
+        animatedCardNumber: [],
         showToast: false,
         toastMessage: '',
         toastType: 'info',
@@ -644,6 +645,8 @@
         ANIM_SLOT_INTERVAL: 40,
         ANIM_IBAN_CHAR_INTERVAL: 40,
         ANIM_IBAN_SLOT_INTERVAL: 50,
+        ANIM_CARD_CHAR_INTERVAL: 40,
+        ANIM_CARD_SLOT_INTERVAL: 50,
 
         firstNames: ['ABDULLAH', 'MOHAMMED', 'FAHAD', 'SULTAN', 'TURKI'],
         middleNames: ['AHMED', 'IBN', 'ABDUL', 'BIN', 'AL'],
@@ -872,6 +875,10 @@
 
               this.generatedCard = { number, name, expiry, cvv };
 
+              this.$nextTick(() => {
+                this.animateCardNumber('animatedCardNumber', number, this.ANIM_CARD_CHAR_INTERVAL, this.ANIM_CARD_SLOT_INTERVAL);
+              });
+
               if (!this.cardHistory.some(item => item.number === number)) {
                 this.cardHistory.unshift({ number, name, expiry, cvv });
                 this.cardHistory = this.cardHistory.slice(0, this.CARD_HISTORY_LIMIT);
@@ -1056,6 +1063,43 @@
             }
             let currentChars = [...this[propName]];
             let charIndex = 2;
+            let intervalId;
+
+            intervalId = setInterval(() => {
+                if (charIndex >= targetChars.length) {
+                    clearInterval(intervalId);
+                    window[`${propName}Interval`] = null;
+                    this[propName] = [...targetChars];
+                    return;
+                }
+                const currentSlot = charIndex;
+                let cycleCount = 0;
+                const maxCycles = 4;
+                let charIntervalId = setInterval(() => {
+                    if (cycleCount >= maxCycles) {
+                        clearInterval(charIntervalId);
+                        currentChars[currentSlot] = targetChars[currentSlot];
+                        this[propName] = [...currentChars];
+                    } else {
+                        currentChars[currentSlot] = Math.floor(Math.random() * 10).toString();
+                        this[propName] = [...currentChars];
+                        cycleCount++;
+                    }
+                }, charIntervalSpeed);
+                charIndex++;
+            }, slotIntervalSpeed);
+            window[`${propName}Interval`] = intervalId;
+        },
+
+        animateCardNumber(propName, targetNumber, charIntervalSpeed, slotIntervalSpeed) {
+            if (window[`${propName}Interval`]) clearInterval(window[`${propName}Interval`]);
+
+            const targetChars = targetNumber.split('');
+            if (!Array.isArray(this[propName]) || this[propName].length !== targetChars.length) {
+                 this[propName] = Array(targetChars.length).fill('#');
+            }
+            let currentChars = [...this[propName]];
+            let charIndex = 0;
             let intervalId;
 
             intervalId = setInterval(() => {
