@@ -1,15 +1,6 @@
 services:
   - type: web
     name: saudi-iban-generator
-    env: docker
-    plan: free
-    dockerfilePath: Dockerfile
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_KEY
-        value: base64:CbpI/k9IdQUWo6uDvjpdFDobrRnsd+MPAVRHOxQCV4s=
-      - key: DB_CONNECTION
-        value: sqlite
-      - key: DB_DATABASE
-        value: /var/www/html/database/database.sqlite
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./public
