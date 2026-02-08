@@ -150,7 +150,10 @@
       <div class="space-y-2">
         <p class="text-sm font-medium text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Saudi IBAN Generator' : 'مولد الآيبان السعودي'"></p>
         <h1 class="text-2xl font-semibold tracking-tight" x-text="lang === 'en' ? 'Generate compliant Saudi IBANs and cards' : 'توليد آيبانات وبطاقات سعودية متوافقة'"></h1>
-        <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Built with the shadcn/ui design system and default palette.' : 'مصمم باستخدام نظام shadcn/ui ولوحة الألوان الافتراضية.'"></p>
+        <p
+          class="text-sm text-[hsl(var(--muted-foreground))]"
+          x-html="lang === 'en' ? 'Built by <a href=&quot;https://github.com/a-almazyad&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; class=&quot;underline underline-offset-2&quot;>@a-almazyad</a> using AI.' : 'تم البناء بواسطة <a href=&quot;https://github.com/a-almazyad&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; class=&quot;underline underline-offset-2&quot;>@a-almazyad</a> باستخدام الذكاء الاصطناعي.'"
+        ></p>
       </div>
       <div class="flex items-center gap-2">
         <button
@@ -187,27 +190,27 @@
             class="inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
             :class="activeTab==='iban' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
           >
-            <span x-text="lang === 'en' ? 'IBAN Generator' : 'مولد الآيبان'"></span>
+            <span x-text="lang === 'en' ? 'IBAN' : 'الآيبان'"></span>
           </button>
           <button
             @click="activeTab='card'"
             class="inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]"
             :class="activeTab==='card' ? 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow' : ''"
           >
-            <span x-text="lang === 'en' ? 'Credit Card Generator' : 'مولد البطاقات'"></span>
+            <span x-text="lang === 'en' ? 'Credit Card' : 'بطاقات الائتمان'"></span>
           </button>
         </div>
       </div>
 
-      <div x-show="activeTab==='iban'" class="grid gap-6 lg:grid-cols-2" x-cloak>
-        <section aria-labelledby="generator-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+      <div x-show="activeTab==='iban'" class="grid gap-6 lg:grid-cols-2 items-stretch" x-cloak>
+        <section aria-labelledby="generator-heading" class="flex h-full min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex flex-col space-y-1.5 p-6">
             <h2 id="generator-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Saudi IBAN Generator' : 'مولد الآيبان السعودي 🇸🇦'"></h2>
             <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate valid-format Saudi IBANs.' : 'توليد آيبانات سعودية بتنسيق صحيح.'"></p>
           </div>
-          <div class="space-y-6 px-6 pb-6">
+          <div class="flex flex-1 flex-col space-y-6 px-6 pb-6">
             <div
-              class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
+              class="min-h-[140px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left"
               data-iban-highlight
             >
               <div class="flex items-start justify-between gap-2">
@@ -306,7 +309,7 @@
             <button
               @click="generateIban()"
               type="button"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
               x-ref="generateButton"
@@ -317,7 +320,7 @@
           </div>
         </section>
 
-        <section aria-labelledby="history-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="history-heading" class="flex h-full min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex items-center justify-between p-6">
             <div class="space-y-1">
               <h2 id="history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent IBANs' : 'الآيبانات الأخيرة'"></h2>
@@ -335,11 +338,11 @@
               <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
             </button>
           </div>
-          <div class="px-6 pb-6">
-            <div class="min-h-[180px]">
+          <div class="flex flex-1 flex-col px-6 pb-6">
+            <div class="min-h-[220px] flex-1">
               <template x-if="ibanHistory.length">
                 <ul class="space-y-2" aria-labelledby="history-heading">
-                  <template x-for="(item, index) in ibanHistory" :key="item.iban + index">
+                  <template x-for="(item, index) in ibanHistory.slice(0, 4)" :key="item.iban + index">
                     <li
                       class="history-list-item iban-history-list-item rounded-md border border-[hsl(var(--border))] p-3 text-sm transition"
                       :class="{
@@ -387,14 +390,14 @@
         </section>
       </div>
 
-      <div x-show="activeTab==='card'" class="grid gap-6 lg:grid-cols-2" x-cloak>
-        <section aria-labelledby="card-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+      <div x-show="activeTab==='card'" class="grid gap-6 lg:grid-cols-2 items-stretch" x-cloak>
+        <section aria-labelledby="card-heading" class="flex h-full min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex flex-col space-y-1.5 p-6">
             <h2 id="card-heading" class="text-xl font-semibold" x-text="lang === 'en' ? '🇸🇦 Credit Card Generator' : 'مولد بطاقات الائتمان 🇸🇦'"></h2>
             <p class="text-sm text-[hsl(var(--muted-foreground))]" x-text="lang === 'en' ? 'Generate random Saudi credit card data.' : 'توليد بيانات بطاقات سعودية عشوائية.'"></p>
           </div>
-          <div class="space-y-6 px-6 pb-6">
-            <div class="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left">
+          <div class="flex flex-1 flex-col space-y-6 px-6 pb-6">
+            <div class="min-h-[160px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4 text-left">
               <div class="flex items-start justify-between gap-2">
                 <p class="text-xs font-semibold text-[hsl(var(--muted-foreground))]" :class="lang === 'ar' ? 'text-right' : 'text-left'" x-text="lang === 'en' ? 'Generated Card' : 'البطاقة المولدة'"></p>
                 <button
@@ -419,7 +422,7 @@
             <button
               @click="generateCard()"
               type="button"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
+              class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md bg-[hsl(var(--primary))] px-4 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))] disabled:pointer-events-none disabled:opacity-70"
               :disabled="generating"
               :class="{ 'opacity-75 cursor-wait': generating }"
             >
@@ -429,7 +432,7 @@
           </div>
         </section>
 
-        <section aria-labelledby="card-history-heading" class="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
+        <section aria-labelledby="card-history-heading" class="flex h-full min-h-[520px] flex-col rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-sm">
           <div class="flex items-center justify-between p-6">
             <div class="space-y-1">
               <h2 id="card-history-heading" class="text-base font-semibold" x-text="lang === 'en' ? 'Recent Cards' : 'البطاقات الأخيرة'"></h2>
@@ -447,11 +450,11 @@
               <span x-text="lang === 'en' ? 'Clear' : 'مسح'"></span>
             </button>
           </div>
-          <div class="px-6 pb-6">
-            <div class="min-h-[180px]">
+          <div class="flex flex-1 flex-col px-6 pb-6">
+            <div class="min-h-[220px] flex-1">
               <template x-if="cardHistory.length">
                 <ul class="space-y-2" aria-labelledby="card-history-heading">
-                  <template x-for="(item, index) in cardHistory" :key="item.number + index">
+                  <template x-for="(item, index) in cardHistory.slice(0, 4)" :key="item.number + index">
                     <li
                       class="history-list-item card-history-list-item rounded-md border border-[hsl(var(--border))] p-3 text-sm transition"
                       :class="{
