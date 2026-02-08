@@ -74,7 +74,7 @@ Generate compliant Saudi IBANs and sample Saudi Visa card details in a fast, sta
 
 ```text
 public/          # Static site assets (index.html, logos, built creditCard.js)
-src/             # Helper modules (IBAN + card generators)
+src/             # Helper modules (card generator)
 scripts/         # Build script to bundle creditCard helper for the browser
 tests/           # Jest tests for generator logic
 ```
