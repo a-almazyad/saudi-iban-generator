@@ -1073,6 +1073,11 @@
 
         animateCardNumber(propName, targetNumber, charIntervalSpeed, slotIntervalSpeed) {
             if (window[`${propName}Interval`]) clearInterval(window[`${propName}Interval`]);
+            const slotIntervalsKey = `${propName}SlotIntervals`;
+            if (Array.isArray(window[slotIntervalsKey])) {
+                window[slotIntervalsKey].forEach(clearInterval);
+            }
+            window[slotIntervalsKey] = [];
 
             const targetChars = targetNumber.split('');
             if (!Array.isArray(this[propName]) || this[propName].length !== targetChars.length) {
@@ -1103,6 +1108,7 @@
                         cycleCount++;
                     }
                 }, charIntervalSpeed);
+                window[slotIntervalsKey].push(charIntervalId);
                 charIndex++;
             }, slotIntervalSpeed);
             window[`${propName}Interval`] = intervalId;
