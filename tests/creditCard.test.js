@@ -1,9 +1,9 @@
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
 const { luhnCheck, generateVisaNumber } = require('../src/creditCard');
 
-describe('generateVisaNumber', () => {
-  test('generates a 16-digit Visa card number that passes Luhn', () => {
-    const card = generateVisaNumber();
-    expect(card).toMatch(/^4\d{15}$/);
-    expect(luhnCheck(card)).toBe(true);
-  });
+test('generates a 16-digit Visa card number that passes Luhn', () => {
+  const card = generateVisaNumber();
+  assert.match(card, /^4\d{15}$/);
+  assert.equal(luhnCheck(card), true);
 });

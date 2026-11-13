@@ -65,7 +65,7 @@ Generate compliant Saudi IBANs and sample Saudi Visa card details in a fast, sta
 
 - **Frontend**: HTML, Tailwind CSS (CDN), Alpine.js (CDN)
 - **Bundling**: Node.js script to expose the credit card helper in the browser
-- **Testing**: Jest (for helper modules in `src/`)
+- **Testing**: Node.js built-in test runner (for helper modules in `src/`)
 - **Deployment**: Static hosting (no backend required)
 
 ---
@@ -76,7 +76,7 @@ Generate compliant Saudi IBANs and sample Saudi Visa card details in a fast, sta
 public/          # Static site assets (index.html, logos, built creditCard.js)
 src/             # Helper modules (card generator)
 scripts/         # Build script to bundle creditCard helper for the browser
-tests/           # Jest tests for generator logic
+tests/           # Tests for generator logic
 ```
 
 ---
@@ -95,7 +95,7 @@ Or open `public/index.html` directly.
 
 ## 🧪 Testing & Bundling
 
-Run `npm test` to execute the Jest suite. Helper modules in `src/` are CommonJS files used primarily for these tests.
+Run `npm test` with Node.js 18 or newer. Helper modules in `src/` are CommonJS files used primarily for these tests.
 
 To make the credit card generator available in the browser, run:
 
